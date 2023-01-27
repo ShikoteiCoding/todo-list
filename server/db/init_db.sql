@@ -10,5 +10,6 @@ CREATE TABLE IF NOT EXISTS notes (
     content TEXT,
     create_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     modify_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    deleted BOOLEAN,
     PRIMARY KEY (id)
 );

@@ -14,5 +14,15 @@ services:
       - note-db:/var/lib/postgresql/data
       - ./db/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
 
+  note-api:
+    build: api/
+    container_name: note-api
+    ports:
+      - "${FLASK_PORT}:${FLASK_PORT}"
+    env_file:
+      - .env
+    depends_on:
+      - note-db
+
 volumes:
   note-db:

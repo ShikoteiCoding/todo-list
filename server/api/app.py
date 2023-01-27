@@ -1,13 +1,23 @@
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
+
+import utils as utils
+
 import psycopg2
 import os
+
+if utils.is_docker():
+    print("Script contained by docker")
+    os.environ["POSTGRES_HOST"] = os.getenv("POSTGRES_INTERNAL_HOST")
+else:
+    load_dotenv("../.env") # Local only
+    os.environ["POSTGRES_HOST"] = os.getenv("POSTGRES_EXTERNAL_HOST")
 
 app = Flask(__name__)
 
 def get_connection():
     connection = psycopg2.connect(
-        host=os.getenv("POSTGRES_EXTERNAL_HOST"),
+        host=os.getenv("POSTGRES_HOST"),
         port=os.getenv("POSTGRES_PORT"),
         user=os.getenv("POSTGRES_USER"),
         password=os.getenv("POSTGRES_PASSWORD"),
@@ -84,5 +94,4 @@ def delete_note(id):
             return jsonify({"message": "Note deleted"})
 
 if __name__ == "__main__":
-    load_dotenv("../.env")
     app.run(host="0.0.0.0", port=8000)

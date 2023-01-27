@@ -1,9 +1,9 @@
 version: "3.9"
 
 services:
-  todo-db:
+  note-db:
     image: postgres:12
-    container_name: todo-db
+    container_name: note-db
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
@@ -11,8 +11,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - todo-db:/var/lib/postgresql/data
+      - note-db:/var/lib/postgresql/data
       - ./db/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
 
 volumes:
-  todo-db:
+  note-db:

@@ -10,10 +10,11 @@ if utils.is_docker():
     print("Script contained by docker")
     os.environ["POSTGRES_HOST"] = os.getenv("POSTGRES_INTERNAL_HOST", "")
 else:
-    load_dotenv("../.env") # Local only
+    load_dotenv("../.env")  # Local only
     os.environ["POSTGRES_HOST"] = os.getenv("POSTGRES_EXTERNAL_HOST", "")
 
 app = Flask(__name__)
+
 
 def get_connection():
     connection = psycopg2.connect(
@@ -21,67 +22,90 @@ def get_connection():
         port=os.getenv("POSTGRES_PORT"),
         user=os.getenv("POSTGRES_USER"),
         password=os.getenv("POSTGRES_PASSWORD"),
-        dbname=os.getenv("POSTGRES_DB")
+        dbname=os.getenv("POSTGRES_DB"),
     )
     return connection
+
 
 @app.route("/notes", methods=["GET"])
 def get_notes():
     with get_connection() as connection:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT id, title, content, create_date, modify_date FROM notes")
+            cursor.execute(
+                "SELECT id, title, content, create_date, modify_date FROM notes"
+            )
             notes = cursor.fetchall()
-            return jsonify([{
-                "id": note[0],
-                "title": note[1],
-                "content": note[2],
-                "create_date": note[3],
-                "modify_date": note[4]
-            } for note in notes])
+            return jsonify(
+                [
+                    {
+                        "id": note[0],
+                        "title": note[1],
+                        "content": note[2],
+                        "create_date": note[3],
+                        "modify_date": note[4],
+                    }
+                    for note in notes
+                ]
+            )
+
 
 @app.route("/notes", methods=["POST"])
 def create_note():
-    title = request.json["title"] #type: ignore
-    content = request.json["content"] #type: ignore
+    title = request.json["title"]  # type: ignore
+    content = request.json["content"]  # type: ignore
     with get_connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
                 "INSERT INTO notes (title, content, create_date, modify_date) VALUES (%s, %s, NOW(), NOW())",
-                (title, content)
+                (title, content),
             )
             connection.commit()
-            cursor.execute("SELECT id, title, content, create_date, modify_date FROM notes ORDER BY id DESC LIMIT 1")
+            cursor.execute(
+                "SELECT id, title, content, create_date, modify_date FROM notes ORDER BY id DESC LIMIT 1"
+            )
             note = cursor.fetchone()
-            return jsonify({
-                "id": note[0], #type: ignore
-                "title": note[1], #type: ignore
-                "content": note[2], #type: ignore
-                "create_date": note[3], #type: ignore
-                "modify_date": note[4] #type: ignore
-            }), 201
+            return (
+                jsonify(
+                    {
+                        "id": note[0],  # type: ignore
+                        "title": note[1],  # type: ignore
+                        "content": note[2],  # type: ignore
+                        "create_date": note[3],  # type: ignore
+                        "modify_date": note[4],  # type: ignore
+                    }
+                ),
+                201,
+            )
+
 
 @app.route("/notes/<int:id>", methods=["PUT"])
 def update_note(id):
-    title = request.json.get("title") #type: ignore
-    content = request.json.get("content") #type: ignore
+    title = request.json.get("title")  # type: ignore
+    content = request.json.get("content")  # type: ignore
     with get_connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
                 "UPDATE notes SET title = %s, content = %s, modify_date = NOW() WHERE id = %s",
-                (title, content, id)
+                (title, content, id),
             )
             connection.commit()
-            cursor.execute("SELECT id, title, content, create_date, modify_date FROM notes WHERE id = %s", (id,))
+            cursor.execute(
+                "SELECT id, title, content, create_date, modify_date FROM notes WHERE id = %s",
+                (id,),
+            )
             note = cursor.fetchone()
             if not note:
                 return jsonify({"error": "Note not found"}), 404
-            return jsonify({
-                "id": note[0],
-                "title": note[1],
-                "content": note[2],
-                "create_date": note[3],
-                "modify_date": note[4]
-            })
+            return jsonify(
+                {
+                    "id": note[0],
+                    "title": note[1],
+                    "content": note[2],
+                    "create_date": note[3],
+                    "modify_date": note[4],
+                }
+            )
+
 
 @app.route("/notes/<int:id>", methods=["DELETE"])
 def delete_note(id):
@@ -92,6 +116,7 @@ def delete_note(id):
             if cursor.rowcount == 0:
                 return jsonify({"error": "Note not found"}), 404
             return jsonify({"message": "Note deleted"})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)

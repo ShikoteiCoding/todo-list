@@ -8,10 +8,10 @@ import os
 
 if utils.is_docker():
     print("Script contained by docker")
-    os.environ["POSTGRES_HOST"] = os.getenv("POSTGRES_INTERNAL_HOST")
+    os.environ["POSTGRES_HOST"] = os.getenv("POSTGRES_INTERNAL_HOST", "")
 else:
     load_dotenv("../.env") # Local only
-    os.environ["POSTGRES_HOST"] = os.getenv("POSTGRES_EXTERNAL_HOST")
+    os.environ["POSTGRES_HOST"] = os.getenv("POSTGRES_EXTERNAL_HOST", "")
 
 app = Flask(__name__)
 
@@ -41,8 +41,8 @@ def get_notes():
 
 @app.route("/notes", methods=["POST"])
 def create_note():
-    title = request.json["title"]
-    content = request.json["content"]
+    title = request.json["title"] #type: ignore
+    content = request.json["content"] #type: ignore
     with get_connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
@@ -53,17 +53,17 @@ def create_note():
             cursor.execute("SELECT id, title, content, create_date, modify_date FROM notes ORDER BY id DESC LIMIT 1")
             note = cursor.fetchone()
             return jsonify({
-                "id": note[0],
-                "title": note[1],
-                "content": note[2],
-                "create_date": note[3],
-                "modify_date": note[4]
+                "id": note[0], #type: ignore
+                "title": note[1], #type: ignore
+                "content": note[2], #type: ignore
+                "create_date": note[3], #type: ignore
+                "modify_date": note[4] #type: ignore
             }), 201
 
 @app.route("/notes/<int:id>", methods=["PUT"])
 def update_note(id):
-    title = request.json.get("title")
-    content = request.json.get("content")
+    title = request.json.get("title") #type: ignore
+    content = request.json.get("content") #type: ignore
     with get_connection() as connection:
         with connection.cursor() as cursor:
             cursor.execute(

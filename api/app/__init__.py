@@ -20,4 +20,4 @@ def create_app(config:Config=Config()) -> Flask:
 
 
 
-#from app import routes, models
+from app import routes, models

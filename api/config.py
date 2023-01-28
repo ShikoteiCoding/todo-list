@@ -26,4 +26,4 @@ class Config(object):
     def SQLALCHEMY_DATABASE_URI(self):
         if utils.is_docker():
             return f"postgres://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-        return 'sqlite:///' + 'app.db' # macos uri
+        return "sqlite:///" + "app.db"  # macos uri

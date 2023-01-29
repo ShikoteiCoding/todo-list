@@ -8,3 +8,6 @@ class Note(db.Model): # type: ignore
     create_date = db.Column(db.DateTime(timezone=False), default=func.now())
     modify_date = db.Column(db.DateTime(timezone=False), default=func.now())
     deleted = db.Column(db.Boolean, default=False)
+
+    def __repr__(self) -> str:
+        return '<Note {!r}>'.format(vars(self))

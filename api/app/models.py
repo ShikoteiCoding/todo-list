@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 
 from app import db, login
 
+
 class PaginatedAPIMixin(object):
     @staticmethod
     def to_collection_dict(query, page, per_page, endpoint, **kwargs):
@@ -45,10 +46,12 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):  # type: ignore
             },
         }
 
-    def from_dict(self, data: dict):
+    def from_dict(self, data: dict, new_user: bool = False):
         for field in ["username"]:
             if field in data:
                 setattr(self, field, data[field])
+        if new_user:
+            ...
 
     def get_token(self):
         ...
@@ -70,5 +73,3 @@ class Note(db.Model):  # type: ignore
 
     def __repr__(self) -> str:
         return "<Note {!r}>".format(vars(self))
-
-

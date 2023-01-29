@@ -13,6 +13,11 @@ def create_app(config:Config=Config()) -> Flask:
     db.init_app(app)
     migrate.init_app(app, db)
 
+    # Blueprint registration
+    from app.api import bp as api_bp
+    app.register_blueprint(api_bp, url_prefix='/api')
+
+
     if not app.debug and not app.testing:
         print("Not in debug or testing mode")
 

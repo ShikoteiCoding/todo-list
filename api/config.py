@@ -21,6 +21,7 @@ class Config(object):
     POSTGRES_PORT = getenv_required("POSTGRES_PORT")
     POSTGRES_DB = getenv_required("POSTGRES_DB")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    DEBUG = True
 
     @property
     def SQLALCHEMY_DATABASE_URI(self):

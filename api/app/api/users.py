@@ -22,7 +22,7 @@ def get_users() -> Response:
 @bp.route("/users", methods=["POST"])
 def create_user() -> Response:
     data = request.get_json() or {}
-    if "username" not in data or "email" not in data or "password" not in data:
+    if "username" not in data:
         return bad_request("Must include username.")
     if User.query.filter_by(username=data["username"]).first():
         return bad_request("Please use a different username.")

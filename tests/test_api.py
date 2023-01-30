@@ -1,42 +1,61 @@
 import json
 import pytest
+import requests
+import sys
 
-from app import create_app
+# Import local package
+sys.path.append("api")
 
-@pytest.fixture
-def client():
-    app = create_app()
-    client = app.test_client()
-    yield client
+from api.app import create_app
 
-def test_create_note(client):
-    response = client.post(
-        '/notes',
-        data=json.dumps({'title': 'Test Title', 'content': 'Test Content'}),
-        content_type='application/json'
-    )
-    assert response.status_code == 201
-    assert json.loads(response.data) == {'id': 1, 'title': 'Test Title', 'content': 'Test Content'}
+from api.config import Config
 
-def test_get_note(client):
-    response = client.get('/notes/1')
-    assert response.status_code == 200
-    assert json.loads(response.data) == {'id': 1, 'title': 'Test Title', 'content': 'Test Content'}
 
-def test_get_notes(client):
-    response = client.get('/notes')
-    assert response.status_code == 200
-    assert json.loads(response.data) == [{'id': 1, 'title': 'Test Title', 'content': 'Test Content'}]
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///tests/app.db"
 
-def test_update_note(client):
-    response = client.put(
-        '/notes/1',
-        data=json.dumps({'title': 'New Title', 'content': 'New Content'}),
-        content_type='application/json'
-    )
-    assert response.status_code == 200
-    assert json.loads(response.data) == {'id': 1, 'title': 'New Title', 'content': 'New Content'}
+@pytest.fixture()
+def app():
+    app = create_app(TestConfig())
+    # other setup can go here
 
-def test_delete_note(client):
-    response = client.delete('/notes/1')
-    assert response.status_code == 204
+    yield app
+
+    # clean up / reset resources here
+
+
+@pytest.fixture()
+def client(app):
+    return app.test_client()
+
+
+@pytest.fixture()
+def runner(app):
+    return app.test_cli_runner()
+
+
+# @pytest.fixture
+# def client():
+#    app = create_app(TestConfig())
+#    app_context = app.app_context()
+#    app_context.push()
+#    yield client
+def test_empty_db(client):
+    response = client.get("/")
+    assert response.status_code == 404
+
+
+# def test_create_user(client):
+#    response = requests.post(
+#        "http://127.0.0.1:5000/api/users",
+#        json=json.dumps({"username": "Test Username"}),
+#    )
+#    assert response.status_code == 201
+#    assert json.loads(response.text) == {"id": 1, "username": "Test Username"}
+#
+#
+# def test_get_user(client):
+#    response = client.get("/api/users/1")
+#    assert response.status_code == 200
+#    assert json.loads(response.data) == {"id": 1, "username": "Test Username"}

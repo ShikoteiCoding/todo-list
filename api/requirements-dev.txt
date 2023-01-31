@@ -1,0 +1,7 @@
+flask==2.2.2
+psycopg2-binary==2.9.5
+python-dotenv==0.21.1
+flask-sqlalchemy==3.0.2
+flask-migrate==4.0.2
+Flask-login==0.6.2
+httpie==3.2.1

@@ -5,6 +5,8 @@ from app.api import bp
 from app.models import User
 from app.api.errors import bad_request
 
+import json
+
 
 @bp.route("/users/<int:id>", methods=["GET"])
 def get_user(id: int) -> Response:

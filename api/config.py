@@ -23,6 +23,6 @@ def sqlalchemi_database_uri() -> str:
     return f"postgres://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
 
-class Config(object):
+class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = sqlalchemi_database_uri()

@@ -41,9 +41,9 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):  # type: ignore
             "id": self.id,
             "username": self.username,
             "token": self.token,
-            "_links": {
-                "self": url_for("api.get_user", id=self.id),
-            },
+            #"_links": {
+            #    "self": url_for("api.get_user", id=self.id),
+            #},
         }
 
     def from_dict(self, data: dict, new_user: bool = False):

@@ -8,4 +8,8 @@ done
 
 echo "PostgreSQL started..."
 
+ls
+
+echo $SQLALCHEMY_DATABASE_URI
+
 python3 manage.py run -h 0.0.0.0

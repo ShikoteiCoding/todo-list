@@ -10,7 +10,7 @@ migrate = Migrate()
 login = LoginManager()
 
 
-def create_app(*, config: BaseConfig|None=None) -> Flask:
+def create_app(*, config: BaseConfig | None = None) -> Flask:
     app = Flask(__name__)
 
     if config:

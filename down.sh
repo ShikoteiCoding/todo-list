@@ -1,7 +1,7 @@
 #!/bin/sh
 
-CONTAINER_DB_NAME="note-db"
-CONTAINER_API_NAME="note-api"
+CONTAINER_DB_NAME="api-db"
+CONTAINER_API_NAME="api"
 VOLUME_NAME="server_note-db"
 
 if [ $( docker ps -a | grep $CONTAINER_DB_NAME | wc -l ) -gt 0 ]; then

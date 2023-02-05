@@ -1,18 +1,20 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate  # type: ignore
+from flask_migrate import Migrate
 from flask_login import LoginManager
 
-from config import BaseConfig
+from .config import BaseConfig
 
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
 
 
-def create_app(config: BaseConfig = BaseConfig()) -> Flask:
+def create_app(*, config: BaseConfig|None=None) -> Flask:
     app = Flask(__name__)
-    app.config.from_object(config)
+
+    if config:
+        app.config.from_object(config)
 
     db.init_app(app)
     migrate.init_app(app, db)

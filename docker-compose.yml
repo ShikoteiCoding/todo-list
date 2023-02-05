@@ -14,7 +14,7 @@ services:
     env_file:
       - .env
     environment:
-      - APP_SETTINGS=app.config.DevelopmentConfig
+      - APP_SETTINGS=app.config.DevConfig
       - DATABASE_URL=postgresql://postgres:postgres@api-db:5432/api_dev
       - DATABASE_TEST_URL=postgresql://postgres:postgres@api-db:5432/api_test
     depends_on:

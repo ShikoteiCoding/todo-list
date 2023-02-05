@@ -3,14 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate  # type: ignore
 from flask_login import LoginManager
 
-from config import Config
+from config import BaseConfig
 
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
 
 
-def create_app(config: Config = Config()) -> Flask:
+def create_app(config: BaseConfig = BaseConfig()) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config)
 

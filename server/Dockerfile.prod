@@ -15,10 +15,6 @@ RUN pip install -r requirements.txt
 # Add app
 COPY . /app
 
-EXPOSE 8000
-
-CMD ["python", "main.py"]
-
-# Add entrypoint.sh 'Later'
-#COPY ./entrypoint.sh /usr/src/
-#RUN chmod +x /usr/src/entrypoint.sh
+# Add entrypoint.sh
+COPY ./entrypoint.sh /app
+RUN chmod +x /app/entrypoint.sh

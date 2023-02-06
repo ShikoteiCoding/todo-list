@@ -28,12 +28,8 @@ def create_user() -> Response:
     if "username" not in data:
         return bad_request("Must include username.")
     print(f"JSON is a dict {data}, {type(data)}")
-    #print(User.query)
-    if (User
-        .query
-        .filter_by(username=data["username"])
-        .first()
-    ):
+    # print(User.query)
+    if User.query.filter_by(username=data["username"]).first():
         return bad_request("Please use a different username.")
     print("JSON is valid")
     user = User()

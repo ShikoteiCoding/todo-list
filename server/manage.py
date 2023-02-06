@@ -10,7 +10,6 @@ Available commands are:
     help            Show this help
     recreate_db     Recreate the database
 """
-import logging
 from flask.cli import FlaskGroup
 
 from app import create_app, db

@@ -1,5 +1,10 @@
 import os
 
+def get_required(name: str) -> str:
+    var = os.getenv(name, None)
+    if not var:
+        raise Exception(f"Missing environment variable: {name}")
+    return var
 
 class BaseConfig:
     TESTING = False
@@ -8,9 +13,9 @@ class BaseConfig:
 
 
 class DevConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = get_required("DATABASE_URL")
 
 
 class TestConfig(BaseConfig):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_TEST_URL")
+    SQLALCHEMY_DATABASE_URI = get_required("DATABASE_TEST_URL")

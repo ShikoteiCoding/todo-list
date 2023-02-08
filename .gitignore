@@ -1,7 +1,14 @@
+# Python
 /venv/
 **/__pycache__/
-.pytest_cache/
+
+# Flask
 **/instance/
 **/migrations/
+
+# Pytest
+**/.pytest_cache/
+**/.coverage
+
+# Dev
 **/debug.py
-**/old.py

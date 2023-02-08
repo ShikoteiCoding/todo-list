@@ -1,10 +1,12 @@
 import os
 
+
 def get_required(name: str) -> str:
     var = os.getenv(name, None)
     if not var:
         raise Exception(f"Missing environment variable: {name}")
     return var
+
 
 class BaseConfig:
     TESTING = False

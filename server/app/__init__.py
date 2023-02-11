@@ -29,7 +29,7 @@ def create_app(*, config: BaseConfig | None = None) -> Flask:
     # Blueprint registration
     from app.api import bp as api_bp
 
-    app.register_blueprint(api_bp, url_prefix="/api")
+    app.register_blueprint(api_bp, url_prefix="/api/v1")
 
     if not app.debug and not app.testing:
         print("Running in production")

@@ -23,15 +23,11 @@ def get_users() -> Response:
 
 @bp.route("/users", methods=["POST"])
 def create_user() -> Response:
-    print("Received")
     data = request.get_json() or {}
     if "username" not in data:
         return bad_request("Must include username.")
-    print(f"JSON is a dict {data}, {type(data)}")
-    # print(User.query)
     if User.query.filter_by(username=data["username"]).first():
         return bad_request("Please use a different username.")
-    print("JSON is valid")
     user = User()
     user.from_dict(data, new_user=True)
     db.session.add(user)

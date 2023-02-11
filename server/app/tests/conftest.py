@@ -4,6 +4,7 @@ from typing import Generator
 from flask_sqlalchemy import SQLAlchemy
 
 from app import create_app, db
+from app.models import User
 
 
 @pytest.fixture(scope="module")
@@ -23,3 +24,13 @@ def database() -> Generator[SQLAlchemy, None, None]:
     yield db
     db.session.remove()
     db.drop_all()
+
+@pytest.fixture(scope="module")
+def add_user():
+    def _add_user(username: str):
+        user = User(username=username) #type:ignore
+        db.session.add(user)
+        db.session.commit()
+        return user
+
+    return _add_user

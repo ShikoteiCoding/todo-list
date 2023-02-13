@@ -25,10 +25,11 @@ def database() -> Generator[SQLAlchemy, None, None]:
     db.session.remove()
     db.drop_all()
 
+
 @pytest.fixture(scope="module")
 def add_user():
     def _add_user(username: str):
-        user = User(username=username) #type:ignore
+        user = User(username=username)  # type:ignore
         db.session.add(user)
         db.session.commit()
         return user

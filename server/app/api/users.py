@@ -5,9 +5,6 @@ from app.api import bp
 from app.models import User
 from app.api.errors import bad_request
 
-import json
-
-
 @bp.route("/users/<int:id>", methods=["GET"])
 def get_user(id: int) -> Response:
     return jsonify(User.query.get_or_404(id).to_dict())
@@ -51,13 +48,3 @@ def update_user(id: int) -> Response:
     user.from_dict(data, new_user=False)
     db.session.commit()
     return jsonify(user.to_dict())
-
-
-@bp.route("/users/<int:id>/notes", methods=["GET"])  # type: ignore
-def get_notes(id: int):
-    pass
-
-
-@bp.route("/users/<int:id>/notes", methods=["GET"])  # type: ignore
-def get_note(user_id: int, note_id: int):
-    pass

@@ -4,9 +4,14 @@ from app import db
 from app.api._users.models import User
 from app.api.errors import bad_request
 
+# TODO
+# 1. Logging
+# 2. Type db.models
+# 3. Move exceptions away
 
-def get_all_users() -> list[User] | None:
-    """Returns all users."""
+
+def get_all_users() -> list[User]:
+    """returns all users."""
 
     print("get_all_users")
     users = None
@@ -14,49 +19,56 @@ def get_all_users() -> list[User] | None:
         users = User.query.all()
     except Exception as e:
         print(f"Unable to fetch all movies. {e}")
-        pass
-
-    return users
+    return users  # type: ignore
 
 
-def get_user_by_id(id: int) -> User | None:
-    """Returns a singel user."""
+def get_user_by_id(id: int) -> User:
+    """returns a single user."""
 
     print("get_user_by_id")
     user = None
+
     try:
         user = User.query.get_or_404(id)
     except Exception as e:
         print(f"Unable to fetch all movies. {e}")
-        pass
-    return print(user)  # jsonify(User.query.get_or_404(id).to_dict())
+    return user  # type: ignore
 
 
-def create_user() -> Response:
-    data = request.get_json() or {}
-    if "username" not in data:
-        return bad_request("Must include username.")
-    if User.query.filter_by(username=data["username"]).first():
-        return bad_request("Please use a different username.")
-    user = User()
-    user.from_dict(data, new_user=True)
-    db.session.add(user)
-    db.session.commit()
-    response = jsonify(user.to_dict())
-    response.status_code = 201
-    response.headers["Location"] = url_for("api.get_user", id=user.id)
-    return response
+def create_user(username: str) -> User:
+    """creates a single user"""
+
+    print("create_user")
+    user = None
+
+    try:
+        user = User(username=username)
+        db.session.add(user)
+        db.session.commit()
+    except Exception as e:
+        print(f"Unable to create a user. {e}")
+    return user
 
 
-def update_user(id: int) -> Response:
-    user = User.query.get_or_404(id)
-    data = request.get_json() or {}
-    if (
-        "username" in data
-        and data["username"] != user.username
-        and User.query.filter_by(username=data["username"]).first()
-    ):
-        return bad_request("Please use a different username")
-    user.from_dict(data, new_user=False)
-    db.session.commit()
-    return jsonify(user.to_dict())
+def update_user(user: User, username: str) -> User:
+    """updates a single user"""
+    print("update_user")
+
+    try:
+        user.username = username
+        db.session.commit()
+    except Exception as e:
+        print(f"Unable to update user {e}")
+    return user
+
+
+def delete_user(user: User) -> User | None:
+    """deletes a single user"""
+    print("delete_user")
+
+    try:
+        db.session.delete(user)
+        db.session.commit()
+    except Exception as e:
+        print(f"Unable to delete user {e}")
+    return user

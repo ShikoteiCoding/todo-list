@@ -35,7 +35,7 @@ class UserList(Resource):
     @users_namespace.expect(post_user_serializer, validate=True)
     @users_namespace.marshal_with(user)
     def post(self):
-        """returns a single user"""
+        """creates a single user"""
 
         print("UserList.POST")
         args = post_user_serializer.parse_args()

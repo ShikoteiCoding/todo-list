@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 
-from app.api._users.crud import (
+from app.api.users.crud import (
     get_all_users,
     get_user_by_id,
     create_user,
@@ -8,7 +8,7 @@ from app.api._users.crud import (
     delete_user,
 )
 
-from app.api._users.serializer import post_user_serializer
+from app.api.users.serializer import post_user_serializer
 
 # TODO
 # 1. Logger

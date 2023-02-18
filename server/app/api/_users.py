@@ -1,7 +1,7 @@
 from flask import jsonify, Response, request, url_for
 
 from app import db
-from app.api import bp
+from app.api import bp # type: ignore
 from app.models import User
 from app.api.errors import bad_request
 

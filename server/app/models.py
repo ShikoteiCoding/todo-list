@@ -2,7 +2,7 @@ from flask_login import UserMixin
 from flask import url_for
 from sqlalchemy.sql import func
 
-from app import db, login
+from app import db
 
 
 class PaginatedAPIMixin(object):
@@ -57,9 +57,9 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):  # type: ignore
         ...
 
 
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+#@login.user_loader
+#def load_user(id):
+#    return User.query.get(int(id))
 
 
 class Note(db.Model):  # type: ignore

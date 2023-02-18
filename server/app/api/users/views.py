@@ -1,4 +1,5 @@
 from flask_restx import Namespace, Resource, fields
+from structlog import get_logger
 
 from app.api.users.crud import (
     get_all_users,
@@ -10,8 +11,7 @@ from app.api.users.crud import (
 
 from app.api.users.serializer import post_user_serializer
 
-# TODO
-# 1. Logger
+logger = get_logger(__name__)
 
 users_namespace = Namespace("users")
 user = users_namespace.model(
@@ -29,7 +29,7 @@ class UserList(Resource):
     def get(self):
         """returns all users"""
 
-        print("UserList.GET")
+        logger.debug("UserList.GET")
         return get_all_users(), 200
 
     @users_namespace.expect(post_user_serializer, validate=True)
@@ -37,7 +37,7 @@ class UserList(Resource):
     def post(self):
         """creates a single user"""
 
-        print("UserList.POST")
+        logger.debug("UserList.POST")
         args = post_user_serializer.parse_args()
         return create_user(args["username"]), 201
 
@@ -47,7 +47,7 @@ class UserDetail(Resource):
     def get(self, user_id: int):
         """returns a single user"""
 
-        print("UserDetail.GET")
+        logger.debug("UserDetail.GET")
         user = get_user_by_id(user_id)
         if not user:
             users_namespace.abort(404, "user does not exist")
@@ -58,7 +58,7 @@ class UserDetail(Resource):
     def put(self, user_id: int):
         """updates a single user"""
 
-        print("UserDetail.PUT")
+        logger.debug("UserDetail.PUT")
         args = post_user_serializer.parse_args()
         user = get_user_by_id(user_id)
         if not user:
@@ -69,7 +69,7 @@ class UserDetail(Resource):
     def delete(self, user_id: int):
         """deletes a single user"""
 
-        print("UserDetail.DELETE")
+        logger.debug("UserDetail.DELETE")
         user = get_user_by_id(user_id)
         if not user:
             users_namespace.abort(404, "user does not exist")

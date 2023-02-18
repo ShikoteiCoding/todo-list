@@ -10,6 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 def test_user_list_200(app: Flask, database: SQLAlchemy):
     """UserList.GET"""
+    
     client = app.test_client()
     response = client.get("/api/v1/users")
 
@@ -19,6 +20,7 @@ def test_user_list_200(app: Flask, database: SQLAlchemy):
 
 def test_user_list_201(app: Flask, database: SQLAlchemy) -> None:
     """UserList.POST"""
+
     client = app.test_client()
     response = client.post(
         "/api/v1/users",
@@ -31,6 +33,7 @@ def test_user_list_201(app: Flask, database: SQLAlchemy) -> None:
 
 def test_user_get_200(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
     """UserDetail.GET - 200"""
+
     _user = add_user("User_200")
     client = app.test_client()
     response = client.get(f"/api/v1/users/{_user.id}", content_type="application/json")
@@ -52,6 +55,7 @@ def test_user_get_404(app: Flask, database: SQLAlchemy) -> None:
 
 def test_user_put_200(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
     """UserDetail.PUT - 200"""
+
     _user = add_user("User_Put")
     client = app.test_client()
     response = client.get(
@@ -66,6 +70,7 @@ def test_user_put_200(app: Flask, database: SQLAlchemy, add_user: Callable) -> N
 
 def test_user_put_404(app: Flask, database: SQLAlchemy) -> None:
     """UserDetail.PUT - 404"""
+
     client = app.test_client()
     response = client.get(
         "/api/v1/users/111",
@@ -80,6 +85,7 @@ def test_user_put_404(app: Flask, database: SQLAlchemy) -> None:
 
 def test_user_delete_204(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
     """UserDetail.DELETE - 204"""
+
     _user = add_user("User_Delete")
     client = app.test_client()
     response = client.delete(f"/api/v1/users/{_user.id}")
@@ -89,7 +95,8 @@ def test_user_delete_204(app: Flask, database: SQLAlchemy, add_user: Callable) -
 
 
 def test_user_delete_404(app: Flask, database: SQLAlchemy) -> None:
-    """UserDetail.DELETE - 204"""
+    """UserDetail.DELETE - 404"""
+
     client = app.test_client()
     response = client.delete(f"/api/v1/users/111")
     data = json.loads(response.data.decode())

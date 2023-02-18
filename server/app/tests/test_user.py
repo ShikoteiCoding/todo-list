@@ -10,7 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 def test_user_list_200(app: Flask, database: SQLAlchemy):
     """UserList.GET"""
-    
+
     client = app.test_client()
     response = client.get("/api/v1/users")
 

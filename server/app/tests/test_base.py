@@ -2,7 +2,6 @@
 Test base routes.
 """
 
-import json
 from flask import Flask
 
 

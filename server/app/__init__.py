@@ -30,9 +30,8 @@ def create_app(*, config: BaseConfig | None = None) -> Flask:
 
     # register api
     from app.api import api
-    api.init_app(app)
 
-    #app.register_blueprint(api_bp, url_prefix="/api/v1")
+    api.init_app(app)
 
     if not app.debug and not app.testing:
         print("Running in production")
@@ -40,6 +39,3 @@ def create_app(*, config: BaseConfig | None = None) -> Flask:
         print("Running in dev mode")
 
     return app
-
-
-from app import routes, models

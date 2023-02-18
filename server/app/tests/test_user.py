@@ -34,10 +34,8 @@ def test_user_get_200(app: Flask, database: SQLAlchemy, add_user: Callable) -> N
     _user = add_user("User_200")
     client = app.test_client()
     response = client.get(f"/api/v1/users/{_user.id}", content_type="application/json")
-    data = json.loads(response.data.decode())
     assert response.status_code == 200
     assert response.content_type == "application/json"
-    #assert data == _user.to_dict()
 
 
 def test_user_get_404(app: Flask, database: SQLAlchemy) -> None:
@@ -45,9 +43,9 @@ def test_user_get_404(app: Flask, database: SQLAlchemy) -> None:
 
     client = app.test_client()
     response = client.get("/api/v1/users/111", content_type="application/json")
-    # data = json.loads(response.data.decode()) TODO
+    data = json.loads(response.data.decode())
     assert response.status_code == 404
-    # assert "does not exist" in data["message"]
+    assert "user does not exist" in data["message"]
 
 
 def test_user_put_200(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
@@ -72,6 +70,6 @@ def test_user_put_404(app: Flask, database: SQLAlchemy) -> None:
         content_type="application/json",
         data=json.dumps({"username": "User_Put_200"}),
     )
-    # data = json.loads(response.data.decode()) TODO
+    data = json.loads(response.data.decode())
     assert response.status_code == 404
-    # assert "does not exist" in data["message"]
+    assert "user does not exist" in data["message"]

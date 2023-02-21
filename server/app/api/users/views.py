@@ -13,7 +13,10 @@ from app.api.users.serializer import post_user_serializer
 
 logger = get_logger(__name__)
 
+# set the namespace
 users_namespace = Namespace("users")
+
+# set the model
 user = users_namespace.model(
     "User",
     {
@@ -25,6 +28,10 @@ user = users_namespace.model(
 
 
 class UserList(Resource):
+    """
+    resources for /api/v1/users
+    """
+
     @users_namespace.marshal_with(user, as_list=True)
     def get(self):
         """returns all users"""
@@ -43,6 +50,10 @@ class UserList(Resource):
 
 
 class UserDetail(Resource):
+    """
+    resources for /api/v1/user/<int:user_id>
+    """
+
     @users_namespace.marshal_with(user)
     def get(self, user_id: int):
         """returns a single user"""

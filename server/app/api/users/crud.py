@@ -1,10 +1,7 @@
-from flask import jsonify, Response, request, url_for
-
 from structlog import get_logger
 
 from app import db
 from app.api.users.models import User
-from app.api.errors import bad_request
 
 # TODO
 # 1. Type db.models

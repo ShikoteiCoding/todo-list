@@ -35,3 +35,14 @@ def add_user():
         return user
 
     return _add_user
+
+
+@pytest.fixture(scope="module")
+def add_user_with_token():
+    def _add_user(username: str, token: str) -> User:
+        user = User(username=username, token=token)
+        db.session.add(user)
+        db.session.commit()
+        return user
+
+    return _add_user

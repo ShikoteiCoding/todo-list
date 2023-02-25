@@ -11,7 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 def test_user_list_200(app: Flask, database: SQLAlchemy, add_user_with_token: Callable):
     """UserList.GET"""
 
-    _user = add_user_with_token(username="user_200", token="user_200")
+    _user = add_user_with_token(username="users_200", token="users_200")
     client = app.test_client()
     response = client.get(
         "/api/v1/users",
@@ -46,8 +46,8 @@ def test_user_list_403(app: Flask, database: SQLAlchemy, add_user_with_token: Ca
         "/api/v1/users",
         data=json.dumps(
             {
-                "username": "user_403",
-                "api_key": "user_403",
+                "username": "users_403",
+                "api_key": "users_403",
             }
         ),
         content_type="application/json",

@@ -9,9 +9,9 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 def test_ping_200(app: Flask, database: SQLAlchemy, add_user_with_token: Callable):
-    """UserList.GET"""
+    """UserList.GET - 200"""
 
-    _user = add_user_with_token("Ping_403", "Ping_403")
+    _user = add_user_with_token("Ping_200", "Ping_200")
     client = app.test_client()
     response = client.get(
         "/api/v1/ping",

@@ -8,97 +8,129 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 
-def test_user_list_200(app: Flask, database: SQLAlchemy):
+def test_user_list_200(app: Flask, database: SQLAlchemy, add_user_with_token: Callable):
     """UserList.GET"""
+
+    _user = add_user_with_token(username="user_200", token="user_200")
+    client = app.test_client()
+    response = client.get(
+        "/api/v1/users",
+        data=json.dumps(
+            {
+                "username": _user.username,
+                "api_key": _user.token,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    assert response.content_type == "application/json"
+
+
+def test_user_list_400(app: Flask, database: SQLAlchemy):
+    """UserList.GET - 400"""
 
     client = app.test_client()
     response = client.get("/api/v1/users")
 
-    assert response.status_code == 200
+    assert response.status_code == 400
     assert response.content_type == "application/json"
 
 
-def test_user_list_201(app: Flask, database: SQLAlchemy) -> None:
-    """UserList.POST"""
+def test_user_list_403(app: Flask, database: SQLAlchemy, add_user_with_token: Callable):
+    """UserList.GET - 403"""
 
     client = app.test_client()
-    response = client.post(
+    response = client.get(
         "/api/v1/users",
-        data=json.dumps({"username": "Test Username"}),
+        data=json.dumps(
+            {
+                "username": "user_403",
+                "api_key": "user_403",
+            }
+        ),
         content_type="application/json",
     )
-    assert response.status_code == 201
+
+    assert response.status_code == 403
     assert response.content_type == "application/json"
 
 
-def test_user_get_200(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
+def test_user_get_200(
+    app: Flask, database: SQLAlchemy, add_user_with_token: Callable
+) -> None:
     """UserDetail.GET - 200"""
 
-    _user = add_user("User_200")
-    client = app.test_client()
-    response = client.get(f"/api/v1/users/{_user.id}", content_type="application/json")
-
-    assert response.status_code == 200
-    assert response.content_type == "application/json"
-
-
-def test_user_get_404(app: Flask, database: SQLAlchemy) -> None:
-    """UserDetail.GET - 404"""
-
-    client = app.test_client()
-    response = client.get("/api/v1/users/111", content_type="application/json")
-    data = json.loads(response.data.decode())
-
-    assert response.status_code == 404
-    assert "user does not exist" in data["message"]
-
-
-def test_user_put_200(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
-    """UserDetail.PUT - 200"""
-
-    _user = add_user("User_Put")
+    _user = add_user_with_token(username="user_200", token="user_200")
     client = app.test_client()
     response = client.get(
         f"/api/v1/users/{_user.id}",
+        data=json.dumps(
+            {
+                "username": _user.username,
+                "api_key": _user.token,
+            }
+        ),
         content_type="application/json",
-        data=json.dumps({"username": "User_Put_200"}),
     )
 
     assert response.status_code == 200
     assert response.content_type == "application/json"
 
 
-def test_user_put_404(app: Flask, database: SQLAlchemy) -> None:
-    """UserDetail.PUT - 404"""
+def test_user_get_400(
+    app: Flask, database: SQLAlchemy, add_user_with_token: Callable
+) -> None:
+    """UserDetail.GET - 400"""
 
     client = app.test_client()
     response = client.get(
-        "/api/v1/users/111",
-        content_type="application/json",
-        data=json.dumps({"username": "User_Put_200"}),
+        f"/api/v1/users/1",
     )
-    data = json.loads(response.data.decode())
 
-    assert response.status_code == 404
-    assert "user does not exist" in data["message"]
-
-
-def test_user_delete_204(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
-    """UserDetail.DELETE - 204"""
-
-    _user = add_user("User_Delete")
-    client = app.test_client()
-    response = client.delete(f"/api/v1/users/{_user.id}")
-
-    assert response.status_code == 204
+    assert response.status_code == 400
     assert response.content_type == "application/json"
 
 
-def test_user_delete_404(app: Flask, database: SQLAlchemy) -> None:
-    """UserDetail.DELETE - 404"""
+def test_user_get_403(
+    app: Flask, database: SQLAlchemy, add_user_with_token: Callable
+) -> None:
+    """UserDetail.GET - 403"""
 
     client = app.test_client()
-    response = client.delete(f"/api/v1/users/111")
+    response = client.get(
+        f"/api/v1/users/1",
+        data=json.dumps(
+            {
+                "username": "user_403",
+                "api_key": "user_403",
+            }
+        ),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 403
+    assert response.content_type == "application/json"
+
+
+def test_user_get_404(
+    app: Flask, database: SQLAlchemy, add_user_with_token: Callable
+) -> None:
+    """UserDetail.GET - 404"""
+
+    _user = add_user_with_token(username="user_404", token="user_404")
+    client = app.test_client()
+    response = client.get(
+        "/api/v1/users/111",
+        data=json.dumps(
+            {
+                "username": "user_404",
+                "api_key": "user_404",
+            }
+        ),
+        content_type="application/json",
+    )
     data = json.loads(response.data.decode())
 
     assert response.status_code == 404

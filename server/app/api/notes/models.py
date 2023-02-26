@@ -1,7 +1,7 @@
 from app import db
 
 
-class User(db.Model):  # type: ignore
+class Note(db.Model):  # type: ignore
     __tablename__ = "notes"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

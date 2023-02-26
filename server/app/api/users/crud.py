@@ -19,7 +19,7 @@ def get_all_users() -> list[User]:
         users = User.query.all()
     except Exception as e:
         logger.exception(f"Exception occured: {e}")
-        logger.error("Unable to fetch all movies.")
+        logger.error("Unable to fetch all users.")
     return users  # type: ignore
 
 
@@ -33,7 +33,7 @@ def get_user_by_id(id: int) -> User:
         user = User.query.filter_by(id=id).first()
     except Exception as e:
         logger.exception(f"Exception occured: {e}")
-        logger.error("Unable to fetch all movies.")
+        logger.error("Unable to fetch one user.")
     return user  # type: ignore
 
 

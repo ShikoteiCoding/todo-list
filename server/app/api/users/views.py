@@ -33,10 +33,12 @@ user = users_namespace.model(
 ## 2. PUT user except API_KEY & API_SECRET
 ## 3. DELETE user from super-admin role
 
+
 class UserList(Resource):
     """
     resources for /api/v1/users
     """
+
     @api_required
     @users_namespace.marshal_with(user, as_list=True)
     def get(self):
@@ -71,6 +73,7 @@ class UserDetail(Resource):
         if not user:
             users_namespace.abort(404, "user does not exist")
         return user, 200
+
 
 #    @api_required
 #    @users_namespace.expect(post_user_serializer, validate=True)

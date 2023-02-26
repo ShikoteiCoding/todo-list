@@ -30,7 +30,7 @@ def get_user_by_id(id: int) -> User:
     user = None
 
     try:
-        user = User.query.get_or_404(id)
+        user = User.query.filter_by(id=id).first()
     except Exception as e:
         logger.exception(f"Exception occured: {e}")
         logger.error("Unable to fetch all movies.")

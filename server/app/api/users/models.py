@@ -11,6 +11,6 @@ class User(db.Model):  # type: ignore
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     token = db.Column(db.String(32), index=True, unique=False)
 
-    def __init__(self, username="", token=""):
+    def __init__(self, username:str="", token:str=""):
         self.username = username
         self.token = token

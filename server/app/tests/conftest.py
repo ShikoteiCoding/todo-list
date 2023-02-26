@@ -30,7 +30,7 @@ def database() -> Generator[SQLAlchemy, None, None]:
 
 
 @pytest.fixture(scope="module")
-def add_user_with_token() -> Callable[[str, str], User]:
+def add_user() -> Callable[[str, str], User]:
     """fixture to create a user"""
 
     def _add_user(username: str, token: str) -> User:

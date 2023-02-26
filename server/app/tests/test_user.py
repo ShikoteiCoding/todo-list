@@ -8,10 +8,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 
-def test_user_list_200(app: Flask, database: SQLAlchemy, add_user_with_token: Callable):
+def test_user_list_200(app: Flask, database: SQLAlchemy, add_user: Callable):
     """UserList.GET"""
 
-    _user = add_user_with_token(username="users_200", token="users_200")
+    _user = add_user(username="users_200", token="users_200")
     client = app.test_client()
     response = client.get(
         "/api/v1/users",
@@ -38,7 +38,7 @@ def test_user_list_400(app: Flask, database: SQLAlchemy):
     assert response.content_type == "application/json"
 
 
-def test_user_list_403(app: Flask, database: SQLAlchemy, add_user_with_token: Callable):
+def test_user_list_403(app: Flask, database: SQLAlchemy, add_user: Callable):
     """UserList.GET - 403"""
 
     client = app.test_client()
@@ -57,12 +57,10 @@ def test_user_list_403(app: Flask, database: SQLAlchemy, add_user_with_token: Ca
     assert response.content_type == "application/json"
 
 
-def test_user_get_200(
-    app: Flask, database: SQLAlchemy, add_user_with_token: Callable
-) -> None:
+def test_user_get_200(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
     """UserDetail.GET - 200"""
 
-    _user = add_user_with_token(username="user_200", token="user_200")
+    _user = add_user(username="user_200", token="user_200")
     client = app.test_client()
     response = client.get(
         f"/api/v1/users/{_user.id}",
@@ -79,9 +77,7 @@ def test_user_get_200(
     assert response.content_type == "application/json"
 
 
-def test_user_get_400(
-    app: Flask, database: SQLAlchemy, add_user_with_token: Callable
-) -> None:
+def test_user_get_400(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
     """UserDetail.GET - 400"""
 
     client = app.test_client()
@@ -93,9 +89,7 @@ def test_user_get_400(
     assert response.content_type == "application/json"
 
 
-def test_user_get_403(
-    app: Flask, database: SQLAlchemy, add_user_with_token: Callable
-) -> None:
+def test_user_get_403(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
     """UserDetail.GET - 403"""
 
     client = app.test_client()
@@ -114,12 +108,10 @@ def test_user_get_403(
     assert response.content_type == "application/json"
 
 
-def test_user_get_404(
-    app: Flask, database: SQLAlchemy, add_user_with_token: Callable
-) -> None:
+def test_user_get_404(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
     """UserDetail.GET - 404"""
 
-    _user = add_user_with_token(username="user_404", token="user_404")
+    _user = add_user(username="user_404", token="user_404")
     client = app.test_client()
     response = client.get(
         "/api/v1/users/111",

@@ -8,7 +8,6 @@ class Note(db.Model):  # type: ignore
     title = db.Column(db.String(), index=True, unique=False, nullable=True)
     content = db.Column(db.String(), index=False, unique=False, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    request = db.relationship("Users")
 
     def __init__(self, title: str, content: str, user_id: int):
         self.title = title

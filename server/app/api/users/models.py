@@ -10,7 +10,8 @@ class User(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(64), index=True, unique=True, nullable=False)
     token = db.Column(db.String(32), index=True, unique=False)
+    notes = db.relationship("Note", backref="author", lazy="dynamic")
 
-    def __init__(self, username:str="", token:str=""):
+    def __init__(self, username: str = "", token: str = ""):
         self.username = username
         self.token = token

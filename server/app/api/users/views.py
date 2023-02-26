@@ -7,8 +7,6 @@ from app.api.users.crud import (
     get_all_users,
     get_user_by_id,
     create_user,
-    update_user,
-    delete_user,
 )
 
 from app.api.users.serializer import post_user_serializer

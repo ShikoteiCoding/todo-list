@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 def test_user_list_200(app: Flask, database: SQLAlchemy, add_user: Callable):
-    """UserList.GET"""
+    """UserList.GET - 200"""
 
     _user = add_user(username="users_200", token="users_200")
     client = app.test_client()
@@ -82,7 +82,7 @@ def test_user_get_400(app: Flask, database: SQLAlchemy, add_user: Callable) -> N
 
     client = app.test_client()
     response = client.get(
-        f"/api/v1/users/1",
+        f"/api/v1/users",
     )
 
     assert response.status_code == 400

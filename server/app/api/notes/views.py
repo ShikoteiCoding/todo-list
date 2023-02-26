@@ -31,12 +31,22 @@ note = notes_namespace.model(
 
 
 class NoteList(Resource):
-    ...
+    """
+    resources for /api/v1/user/<user_id:int>/notes
+    """
+
+    @api_required
+    @notes_namespace.marshal_with(note, as_list=True)
+    def get(self, user_id: int):
+        """return all notes of user"""
+
+        logger.debug("NoteList.GET")
+        return get_all_notes(user_id), 200
 
 
 class NoteDetail(Resource):
     ...
 
 
-# notes_namespace.add_resource(NoteList, "")
-# notes_namespace.add_resource(NoteDetail, "/<int:note_id>")
+notes_namespace.add_resource(NoteList, "")
+# notes_namespace.add_resource(NoteDetail, "/<int:note_id>", "users/<int:user_id>")

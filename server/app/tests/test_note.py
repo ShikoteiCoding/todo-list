@@ -127,9 +127,7 @@ def test_note_put_200(
     assert response.content_type == "application/json"
 
 
-def test_note_put_404(
-    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
-) -> None:
+def test_note_put_404(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
     """NoteDetail.PUT - 404"""
 
     _user = add_user(username="user_put_404", token="user_put_404")
@@ -139,6 +137,43 @@ def test_note_put_404(
         data=json.dumps(
             {"username": _user.username, "api_key": _user.token, "title": "note_400"}
         ),
+        content_type="application/json",
+    )
+    data = json.loads(response.data.decode())
+
+    assert response.status_code == 404
+    assert response.content_type == "application/json"
+    assert "note does not exist" in data["message"]
+
+
+def test_note_delete_200(
+    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
+) -> None:
+    """NoteDetail.DELETE - 200"""
+
+    _user = add_user(username="user_delete_200", token="user_delete_200")
+    _note = add_note(_user.id, title="note_200", content="note_200")
+    client = app.test_client()
+    response = client.delete(
+        f"api/v1/users/{_user.id}/notes/{_note.id}",
+        data=json.dumps({"username": _user.username, "api_key": _user.token}),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    assert response.content_type == "application/json"
+
+
+def test_note_delete_404(
+    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
+) -> None:
+    """NoteDetail.DELETE - 404"""
+
+    _user = add_user(username="user_delete_404", token="user_delete_404")
+    client = app.test_client()
+    response = client.delete(
+        f"api/v1/users/{_user.id}/notes/111",
+        data=json.dumps({"username": _user.username, "api_key": _user.token}),
         content_type="application/json",
     )
     data = json.loads(response.data.decode())

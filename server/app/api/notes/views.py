@@ -86,6 +86,17 @@ class NoteDetail(Resource):
             notes_namespace.abort(404, "note does not exist")
         return update_note(note, args["title"], args["content"]), 200
 
+    @api_required
+    @notes_namespace.marshal_with(note)
+    def delete(self, user_id: int, note_id: int):
+        """delete a single note"""
+
+        logger.debug("NoteDetail.DELETE")
+        note = get_note_by_id(user_id, note_id)
+        if not note:
+            notes_namespace.abort(404, "note does not exist")
+        return delete_note(note), 200
+
 
 notes_namespace.add_resource(NoteList, "")
 notes_namespace.add_resource(NoteDetail, "/<int:note_id>")

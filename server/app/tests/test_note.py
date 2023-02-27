@@ -85,9 +85,7 @@ def test_note_get_200(
     assert response.content_type == "application/json"
 
 
-def test_note_get_404(
-    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
-) -> None:
+def test_note_get_404(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
     """NoteDetail.GET - 404"""
 
     _user = add_user(username="user_404", token="user_404")
@@ -102,6 +100,49 @@ def test_note_get_404(
         ),
         content_type="application/json",
     )
+    data = json.loads(response.data.decode())
 
     assert response.status_code == 404
     assert response.content_type == "application/json"
+    assert "note does not exist" in data["message"]
+
+
+def test_note_put_200(
+    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
+) -> None:
+    """NoteDetail.PUT - 200"""
+
+    _user = add_user(username="user_put_200", token="user_put_200")
+    _note = add_note(_user.id, title="Note_200", content="note_200")
+    client = app.test_client()
+    response = client.put(
+        f"api/v1/users/{_user.id}/notes/{_note.id}",
+        data=json.dumps(
+            {"username": _user.username, "api_key": _user.token, "title": "note_200"}
+        ),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    assert response.content_type == "application/json"
+
+
+def test_note_put_404(
+    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
+) -> None:
+    """NoteDetail.PUT - 404"""
+
+    _user = add_user(username="user_put_404", token="user_put_404")
+    client = app.test_client()
+    response = client.put(
+        f"api/v1/users/{_user.id}/notes/111",
+        data=json.dumps(
+            {"username": _user.username, "api_key": _user.token, "title": "note_400"}
+        ),
+        content_type="application/json",
+    )
+    data = json.loads(response.data.decode())
+
+    assert response.status_code == 404
+    assert response.content_type == "application/json"
+    assert "note does not exist" in data["message"]

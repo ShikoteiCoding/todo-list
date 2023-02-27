@@ -1,6 +1,8 @@
 from flask_restx import Namespace, Resource, fields
 from structlog import get_logger
 
+from app.api.notes.models import Note
+
 from app.api.security import api_required
 
 from app.api.notes.crud import (
@@ -70,6 +72,19 @@ class NoteDetail(Resource):
         if not note:
             notes_namespace.abort(404, "note does not exist")
         return note, 200
+
+    @api_required
+    @notes_namespace.expect(post_note_serializer, validate=True)
+    @notes_namespace.marshal_with(note)
+    def put(self, user_id: int, note_id: int):
+        """update a single note"""
+
+        logger.debug("NoteDetail.PUT")
+        args = post_note_serializer.parse_args()
+        note = get_note_by_id(user_id, note_id)
+        if not note:
+            notes_namespace.abort(404, "note does not exist")
+        return update_note(note, args["title"], args["content"]), 200
 
 
 notes_namespace.add_resource(NoteList, "")

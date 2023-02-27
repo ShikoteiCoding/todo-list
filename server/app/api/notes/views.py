@@ -32,7 +32,7 @@ note = notes_namespace.model(
 
 class NoteList(Resource):
     """
-    resources for /api/v1/user/<user_id:int>/notes
+    resources for /api/v1/users/<int:user_id>/notes
     """
 
     @api_required
@@ -49,15 +49,28 @@ class NoteList(Resource):
     def post(self, user_id: int):
         """creates a single user"""
 
-        logger.debug("UserList.POST")
+        logger.debug("NoteList.POST")
         args = post_note_serializer.parse_args()
 
         return create_note(user_id, args["title"], args["content"]), 201
 
 
 class NoteDetail(Resource):
-    ...
+    """
+    ressource for /api/v1/users/<int:user_id>/notes/<int:note_id>
+    """
+
+    @api_required
+    @notes_namespace.marshal_with(note)
+    def get(self, user_id: int, note_id: int):
+        """return a single note"""
+
+        logger.debug("NoteDetail.GET")
+        note = get_note_by_id(user_id, note_id)
+        if not note:
+            notes_namespace.abort(404, "note does not exist")
+        return note, 200
 
 
 notes_namespace.add_resource(NoteList, "")
-# notes_namespace.add_resource(NoteDetail, "/<int:note_id>", "users/<int:user_id>")
+notes_namespace.add_resource(NoteDetail, "/<int:note_id>")

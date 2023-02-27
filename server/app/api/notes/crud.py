@@ -26,9 +26,7 @@ def get_note_by_id(user_id: int, note_id: int) -> Note | None:
     logger.debug("get_one_note")
     note = None
     try:
-        note: Note | None = Note.query.filter_by(
-            user_id=user_id, note_id=note_id
-        ).first()
+        note: Note | None = Note.query.filter_by(user_id=user_id, id=note_id).first()
     except Exception as e:
         logger.exception(f"Exception occured: {e}")
         logger.error("Unable to fetch one note.")

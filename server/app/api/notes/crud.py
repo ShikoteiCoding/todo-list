@@ -43,6 +43,8 @@ def create_note(user_id: int, title: str, content: str) -> Note | None:
     note = None
     try:
         note = Note(title=title, content=content, user_id=user_id)
+        db.session.add(note)
+        db.session.commit()
     except Exception as e:
         logger.exception(f"Exception occured: {e}")
         logger.error("Unable to create a note.")

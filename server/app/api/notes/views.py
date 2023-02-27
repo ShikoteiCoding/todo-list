@@ -43,6 +43,17 @@ class NoteList(Resource):
         logger.debug("NoteList.GET")
         return get_all_notes(user_id), 200
 
+    @api_required
+    @notes_namespace.expect(post_note_serializer, validate=True)
+    @notes_namespace.marshal_with(note)
+    def post(self, user_id: int):
+        """creates a single user"""
+
+        logger.debug("UserList.POST")
+        args = post_note_serializer.parse_args()
+
+        return create_note(user_id, args["title"], args["content"]), 201
+
 
 class NoteDetail(Resource):
     ...

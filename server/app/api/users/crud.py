@@ -1,6 +1,5 @@
 from structlog import get_logger
 
-from app import db
 from app.api.users.models import User
 
 # TODO
@@ -10,7 +9,7 @@ from app.api.users.models import User
 logger = get_logger(__name__)
 
 
-def get_all_users() -> list[User]:
+def get_all_users() -> list[User] | None:
     """returns all users."""
 
     logger.debug("get_all_users")
@@ -20,60 +19,17 @@ def get_all_users() -> list[User]:
     except Exception as e:
         logger.exception(f"Exception occured: {e}")
         logger.error("Unable to fetch all users.")
-    return users  # type: ignore
+    return users
 
 
-def get_user_by_id(id: int) -> User:
+def get_user_by_id(id: int) -> User | None:
     """returns a single user."""
 
     logger.debug("get_user_by_id")
     user = None
-
     try:
         user = User.query.filter_by(id=id).first()
     except Exception as e:
         logger.exception(f"Exception occured: {e}")
         logger.error("Unable to fetch one user.")
-    return user  # type: ignore
-
-
-def create_user(username: str) -> User:
-    """creates a single user"""
-
-    logger.debug("create_user")
-    user = None
-
-    try:
-        user = User(username=username)
-        db.session.add(user)
-        db.session.commit()
-    except Exception as e:
-        logger.exception(f"Exception occured: {e}")
-        logger.error("Unable to create a user.")
-    return user
-
-
-def update_user(user: User, username: str) -> User:
-    """updates a single user"""
-    logger.debug("update_user")
-
-    try:
-        user.username = username
-        db.session.commit()
-    except Exception as e:
-        logger.exception(f"Exception occured: {e}")
-        logger.error("Unable to update user {e}")
-    return user
-
-
-def delete_user(user: User) -> User | None:
-    """deletes a single user"""
-    logger.debug("delete_user")
-
-    try:
-        db.session.delete(user)
-        db.session.commit()
-    except Exception as e:
-        logger.exception(f"Exception occured: {e}")
-        logger.error("Unable to delete user {e}")
     return user

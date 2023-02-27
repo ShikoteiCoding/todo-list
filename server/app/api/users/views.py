@@ -3,11 +3,7 @@ from structlog import get_logger
 
 from app.api.security import api_required
 
-from app.api.users.crud import (
-    get_all_users,
-    get_user_by_id,
-    create_user,
-)
+from app.api.users.crud import get_all_users, get_user_by_id
 
 from app.api.users.serializer import post_user_serializer
 
@@ -45,16 +41,6 @@ class UserList(Resource):
         logger.debug("UserList.GET")
         return get_all_users(), 200
 
-    @api_required
-    @users_namespace.expect(post_user_serializer, validate=True)
-    @users_namespace.marshal_with(user)
-    def post(self):
-        """creates a single user"""
-
-        logger.debug("UserList.POST")
-        args = post_user_serializer.parse_args()
-        return create_user(args["username"]), 201
-
 
 class UserDetail(Resource):
     """
@@ -71,31 +57,6 @@ class UserDetail(Resource):
         if not user:
             users_namespace.abort(404, "user does not exist")
         return user, 200
-
-
-#    @api_required
-#    @users_namespace.expect(post_user_serializer, validate=True)
-#    @users_namespace.marshal_with(user)
-#    def put(self, user_id: int):
-#        """updates a single user"""
-#
-#        logger.debug("UserDetail.PUT")
-#        args = post_user_serializer.parse_args()
-#        user = get_user_by_id(user_id)
-#        if not user:
-#            users_namespace.abort(404, "user does not exist")
-#        return update_user(user, args["username"]), 200
-#
-#    @api_required
-#    @users_namespace.marshal_with(user)
-#    def delete(self, user_id: int):
-#        """deletes a single user"""
-#
-#        logger.debug("UserDetail.DELETE")
-#        user = get_user_by_id(user_id)
-#        if not user:
-#            users_namespace.abort(404, "user does not exist")
-#        return delete_user(user), 204
 
 
 users_namespace.add_resource(UserList, "")

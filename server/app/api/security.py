@@ -4,7 +4,6 @@ from flask import request
 from structlog import get_logger
 
 from app.api.users.models import User
-from app.api.errors import error_response
 
 logger = get_logger(__name__)
 

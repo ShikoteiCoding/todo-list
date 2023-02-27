@@ -83,3 +83,25 @@ def test_note_get_200(
 
     assert response.status_code == 200
     assert response.content_type == "application/json"
+
+
+def test_note_get_404(
+    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
+) -> None:
+    """NoteDetail.GET - 404"""
+
+    _user = add_user(username="user_404", token="user_404")
+    client = app.test_client()
+    response = client.get(
+        f"api/v1/users/{_user.id}/notes/111",
+        data=json.dumps(
+            {
+                "username": _user.username,
+                "api_key": _user.token,
+            }
+        ),
+        content_type="application/json",
+    )
+
+    assert response.status_code == 404
+    assert response.content_type == "application/json"

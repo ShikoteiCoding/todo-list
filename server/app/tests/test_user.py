@@ -6,21 +6,23 @@ import json
 from typing import Callable
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask.testing import FlaskClient
+
+from app.api.users.models import User
 
 
-def test_user_list_200(app: Flask, database: SQLAlchemy, add_user: Callable):
+def test_user_list_200(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+):
     """UserList.GET - 200"""
 
-    _user = add_user(username="users_200", token="users_200")
-    client = app.test_client()
+    _user = add_random_user()
     response = client.get(
         "/api/v1/users",
-        data=json.dumps(
-            {
-                "username": _user.username,
-                "api_key": _user.token,
-            }
-        ),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+        },
         content_type="application/json",
     )
 
@@ -28,28 +30,24 @@ def test_user_list_200(app: Flask, database: SQLAlchemy, add_user: Callable):
     assert response.content_type == "application/json"
 
 
-def test_user_list_400(app: Flask, database: SQLAlchemy):
+def test_user_list_400(client: FlaskClient, database: SQLAlchemy):
     """UserList.GET - 400"""
 
-    client = app.test_client()
     response = client.get("/api/v1/users")
 
     assert response.status_code == 400
     assert response.content_type == "application/json"
 
 
-def test_user_list_403(app: Flask, database: SQLAlchemy, add_user: Callable):
+def test_user_list_403(client: FlaskClient, database: SQLAlchemy):
     """UserList.GET - 403"""
 
-    client = app.test_client()
     response = client.get(
         "/api/v1/users",
-        data=json.dumps(
-            {
-                "username": "users_403",
-                "api_key": "users_403",
-            }
-        ),
+        json={
+            "api_access_key_id": "users_403",
+            "api_secret_access_key": "users_403",
+        },
         content_type="application/json",
     )
 
@@ -57,19 +55,19 @@ def test_user_list_403(app: Flask, database: SQLAlchemy, add_user: Callable):
     assert response.content_type == "application/json"
 
 
-def test_user_get_200(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
+def test_user_get_200(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+) -> None:
     """UserDetail.GET - 200"""
 
-    _user = add_user(username="user_200", token="user_200")
-    client = app.test_client()
+    _user = add_random_user()
+
     response = client.get(
         f"/api/v1/users/{_user.id}",
-        data=json.dumps(
-            {
-                "username": _user.username,
-                "api_key": _user.token,
-            }
-        ),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+        },
         content_type="application/json",
     )
 
@@ -77,10 +75,9 @@ def test_user_get_200(app: Flask, database: SQLAlchemy, add_user: Callable) -> N
     assert response.content_type == "application/json"
 
 
-def test_user_get_400(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
+def test_user_get_400(client: FlaskClient, database: SQLAlchemy) -> None:
     """UserDetail.GET - 400"""
 
-    client = app.test_client()
     response = client.get(
         f"/api/v1/users",
     )
@@ -89,18 +86,18 @@ def test_user_get_400(app: Flask, database: SQLAlchemy, add_user: Callable) -> N
     assert response.content_type == "application/json"
 
 
-def test_user_get_403(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
+def test_user_get_403(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+) -> None:
     """UserDetail.GET - 403"""
 
-    client = app.test_client()
+    _user = add_random_user()
     response = client.get(
-        f"/api/v1/users/1",
-        data=json.dumps(
-            {
-                "username": "user_403",
-                "api_key": "user_403",
-            }
-        ),
+        "/api/v1/users/1",
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": "user_403",
+        },
         content_type="application/json",
     )
 
@@ -108,19 +105,18 @@ def test_user_get_403(app: Flask, database: SQLAlchemy, add_user: Callable) -> N
     assert response.content_type == "application/json"
 
 
-def test_user_get_404(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
+def test_user_get_404(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+) -> None:
     """UserDetail.GET - 404"""
 
-    _user = add_user(username="user_404", token="user_404")
-    client = app.test_client()
+    _user = add_random_user()
     response = client.get(
         "/api/v1/users/111",
-        data=json.dumps(
-            {
-                "username": "user_404",
-                "api_key": "user_404",
-            }
-        ),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+        },
         content_type="application/json",
     )
     data = json.loads(response.data.decode())

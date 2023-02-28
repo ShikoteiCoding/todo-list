@@ -6,21 +6,24 @@ import json
 from typing import Callable
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask.testing import FlaskClient
+
+from app.api.users.models import User
 
 
-def test_note_list_200(app: Flask, database: SQLAlchemy, add_user: Callable):
+def test_note_list_200(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+):
     """NoteList.GET - 200"""
 
-    _user = add_user(username="users_200", token="users_200")
-    client = app.test_client()
+    _user = add_random_user()
+
     response = client.get(
         f"api/v1/users/{_user.id}/notes",
-        data=json.dumps(
-            {
-                "username": _user.username,
-                "api_key": _user.token,
-            }
-        ),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+        },
         content_type="application/json",
     )
 
@@ -28,33 +31,35 @@ def test_note_list_200(app: Flask, database: SQLAlchemy, add_user: Callable):
     assert response.content_type == "application/json"
 
 
-def test_note_list_400(app: Flask, database: SQLAlchemy, add_user: Callable):
+def test_note_list_400(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+):
     """NoteList.GET - 400"""
 
-    _user = add_user(username="users_400", token="users_400")
-    client = app.test_client()
+    _user = add_random_user()
+
     response = client.get(f"api/v1/users/{_user.id}/notes")
-    data = json.loads(response.data.decode())
+    # data = json.loads(response.data.decode())
 
     assert response.status_code == 400
     assert response.content_type == "application/json"
 
 
-def test_note_list_201(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
+def test_note_list_201(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+) -> None:
     """NoteList.POST - 201"""
 
-    _user = add_user(username="users_201", token="users_201")
-    client = app.test_client()
+    _user = add_random_user()
+
     response = client.post(
         f"api/v1/users/{_user.id}/notes",
-        data=json.dumps(
-            {
-                "username": _user.username,
-                "api_key": _user.token,
-                "title": "note_201",
-                "content": "note_201",
-            }
-        ),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+            "title": "note_201",
+            "content": "note_201",
+        },
         content_type="application/json",
     )
 
@@ -63,21 +68,22 @@ def test_note_list_201(app: Flask, database: SQLAlchemy, add_user: Callable) -> 
 
 
 def test_note_get_200(
-    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
+    client: FlaskClient,
+    database: SQLAlchemy,
+    add_random_user: Callable[[], User],
+    add_note: Callable,
 ) -> None:
     """NoteDetail.GET - 200"""
 
-    _user = add_user(username="user_200", token="user_200")
+    _user = add_random_user()
     _note = add_note(_user.id, title="note_200", content="note_200")
-    client = app.test_client()
+
     response = client.get(
         f"api/v1/users/{_user.id}/notes/{_note.id}",
-        data=json.dumps(
-            {
-                "username": _user.username,
-                "api_key": _user.token,
-            }
-        ),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+        },
         content_type="application/json",
     )
 
@@ -85,19 +91,19 @@ def test_note_get_200(
     assert response.content_type == "application/json"
 
 
-def test_note_get_404(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
+def test_note_get_404(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+) -> None:
     """NoteDetail.GET - 404"""
 
-    _user = add_user(username="user_404", token="user_404")
-    client = app.test_client()
+    _user = add_random_user()
+
     response = client.get(
         f"api/v1/users/{_user.id}/notes/111",
-        data=json.dumps(
-            {
-                "username": _user.username,
-                "api_key": _user.token,
-            }
-        ),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+        },
         content_type="application/json",
     )
     data = json.loads(response.data.decode())
@@ -108,18 +114,22 @@ def test_note_get_404(app: Flask, database: SQLAlchemy, add_user: Callable) -> N
 
 
 def test_note_put_200(
-    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
+    client: FlaskClient,
+    database: SQLAlchemy,
+    add_random_user: Callable[[], User],
+    add_note: Callable,
 ) -> None:
     """NoteDetail.PUT - 200"""
 
-    _user = add_user(username="user_put_200", token="user_put_200")
+    _user = add_random_user()
     _note = add_note(_user.id, title="Note_200", content="note_200")
-    client = app.test_client()
+
     response = client.put(
         f"api/v1/users/{_user.id}/notes/{_note.id}",
-        data=json.dumps(
-            {"username": _user.username, "api_key": _user.token, "title": "note_200"}
-        ),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+        },
         content_type="application/json",
     )
 
@@ -127,16 +137,20 @@ def test_note_put_200(
     assert response.content_type == "application/json"
 
 
-def test_note_put_404(app: Flask, database: SQLAlchemy, add_user: Callable) -> None:
+def test_note_put_404(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+) -> None:
     """NoteDetail.PUT - 404"""
 
-    _user = add_user(username="user_put_404", token="user_put_404")
-    client = app.test_client()
+    _user = add_random_user()
+
     response = client.put(
         f"api/v1/users/{_user.id}/notes/111",
-        data=json.dumps(
-            {"username": _user.username, "api_key": _user.token, "title": "note_400"}
-        ),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+            "title": "note_400",
+        },
         content_type="application/json",
     )
     data = json.loads(response.data.decode())
@@ -147,16 +161,22 @@ def test_note_put_404(app: Flask, database: SQLAlchemy, add_user: Callable) -> N
 
 
 def test_note_delete_200(
-    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
+    client: FlaskClient,
+    database: SQLAlchemy,
+    add_random_user: Callable[[], User],
+    add_note: Callable,
 ) -> None:
     """NoteDetail.DELETE - 200"""
 
-    _user = add_user(username="user_delete_200", token="user_delete_200")
+    _user = add_random_user()
     _note = add_note(_user.id, title="note_200", content="note_200")
-    client = app.test_client()
+
     response = client.delete(
         f"api/v1/users/{_user.id}/notes/{_note.id}",
-        data=json.dumps({"username": _user.username, "api_key": _user.token}),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+        },
         content_type="application/json",
     )
 
@@ -165,15 +185,21 @@ def test_note_delete_200(
 
 
 def test_note_delete_404(
-    app: Flask, database: SQLAlchemy, add_user: Callable, add_note: Callable
+    client: FlaskClient,
+    database: SQLAlchemy,
+    add_random_user: Callable[[], User],
+    add_note: Callable,
 ) -> None:
     """NoteDetail.DELETE - 404"""
 
-    _user = add_user(username="user_delete_404", token="user_delete_404")
-    client = app.test_client()
+    _user = add_random_user()
+
     response = client.delete(
         f"api/v1/users/{_user.id}/notes/111",
-        data=json.dumps({"username": _user.username, "api_key": _user.token}),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+        },
         content_type="application/json",
     )
     data = json.loads(response.data.decode())

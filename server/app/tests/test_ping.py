@@ -6,21 +6,23 @@ import json
 from typing import Callable
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask.testing import FlaskClient
+
+from app.api.users.models import User
 
 
-def test_ping_200(app: Flask, database: SQLAlchemy, add_user: Callable):
+def test_ping_200(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+):
     """Ping.GET - 200"""
 
-    _user = add_user(username="ping_200", token="ping_200")
-    client = app.test_client()
+    _user = add_random_user()
     response = client.get(
         "/api/v1/ping",
-        data=json.dumps(
-            {
-                "username": _user.username,
-                "api_key": _user.token,
-            }
-        ),
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+        },
         content_type="application/json",
     )
     data = json.loads(response.data.decode())
@@ -30,29 +32,28 @@ def test_ping_200(app: Flask, database: SQLAlchemy, add_user: Callable):
     assert "ping" in data["message"]
 
 
-def test_ping_400(app: Flask, database: SQLAlchemy):
+def test_ping_400(client: FlaskClient, database: SQLAlchemy):
     """Ping.GET - 400"""
 
-    client = app.test_client()
     response = client.get(
         "/api/v1/ping",
     )
-    data = json.loads(response.data.decode())
+    # data = json.loads(response.data.decode())
 
     assert response.status_code == 400
     assert response.content_type == "application/json"
+    # assert "please provide an API keys" in data["message"]
 
 
-def test_ping_403(app: Flask, database: SQLAlchemy):
+def test_ping_403(client: FlaskClient, database: SQLAlchemy):
     """Ping.GET - 403"""
 
-    client = app.test_client()
     response = client.get(
         "/api/v1/ping",
-        data=json.dumps({"username": "ping_403", "api_key": "ping_403"}),
+        json={"api_access_key_id": "ping_403", "api_secret_access_key": "ping_403"},
         content_type="application/json",
     )
-    data = json.loads(response.data.decode())
+    # data = json.loads(response.data.decode())
 
     assert response.status_code == 403
     assert response.content_type == "application/json"

@@ -10,6 +10,8 @@ from flask.testing import FlaskClient
 
 from app.api.users.models import User
 
+from conftest import DEFAULT_API_ACCESS_KEY_ID, DEFAILT_API_SECRET_ACCESS_KEY
+
 
 def test_user_list_200(
     client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
@@ -27,6 +29,25 @@ def test_user_list_200(
     )
 
     assert response.status_code == 200
+    assert response.content_type == "application/json"
+
+
+def test_user_list_201(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+):
+    """UserList.POST - 201"""
+
+    response = client.post(
+        "/api/v1/users",
+        json={
+            "api_access_key_id": DEFAULT_API_ACCESS_KEY_ID,
+            "api_secret_access_key": DEFAILT_API_SECRET_ACCESS_KEY,
+            "username": "New_User",
+        },
+        content_type="application/json",
+    )
+
+    assert response.status_code == 201
     assert response.content_type == "application/json"
 
 
@@ -78,6 +99,7 @@ def test_user_get_200(
 def test_user_get_400(client: FlaskClient, database: SQLAlchemy) -> None:
     """UserDetail.GET - 400"""
 
+    # _user = add_random_user()
     response = client.get(
         f"/api/v1/users",
     )

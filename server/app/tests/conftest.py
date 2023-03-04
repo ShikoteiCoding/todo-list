@@ -40,8 +40,10 @@ def database() -> Generator[SQLAlchemy, None, None]:
     if not has_admin_user:
         db.session.add(
             User(
+                username="admin",
                 api_access_key_id=DEFAULT_API_ACCESS_KEY_ID,
                 api_secret_access_key=DEFAILT_API_SECRET_ACCESS_KEY,
+                is_admin=True,
             )
         )
     yield db
@@ -74,6 +76,7 @@ def add_random_user() -> Callable[[], User]:
             username=random_string(),
             api_access_key_id=random_string(),
             api_secret_access_key=random_string(),
+            is_admin=False,
         )
         db.session.add(user)
         db.session.commit()

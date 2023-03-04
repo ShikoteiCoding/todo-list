@@ -1,9 +1,9 @@
 from flask_restx import Namespace, Resource, fields
 from structlog import get_logger
 
-from app.api.security import api_required
+from app.api.security import api_required, admin_api_required
 
-from app.api.users.crud import get_all_users, get_user_by_id
+from app.api.users.crud import get_all_users, get_user_by_id, create_user
 
 from app.api.users.serializer import post_user_serializer
 
@@ -18,14 +18,10 @@ user = users_namespace.model(
     {
         "id": fields.Integer(readOnly=True),
         "username": fields.String(required=True),
-        "token": fields.String(readOnly=True),
+        "api_access_key_id": fields.String(required=True),
+        "api_secret_access_key": fields.String(required=True),
     },
 )
-
-## TODO
-## 1. Add role / scope to avoid users with proper API key to access other users data
-## 2. PUT user except API_KEY & API_SECRET
-## 3. DELETE user from super-admin role
 
 
 class UserList(Resource):
@@ -40,6 +36,16 @@ class UserList(Resource):
 
         logger.debug("UserList.GET")
         return get_all_users(), 200
+
+    @admin_api_required
+    @users_namespace.expect(post_user_serializer, validate=True)
+    @users_namespace.marshal_with(user, as_list=True)
+    def post(self):
+        """returns all users"""
+
+        logger.debug("UserList.POST")
+        args = post_user_serializer.parse_args()
+        return create_user(username=args["username"]), 201
 
 
 class UserDetail(Resource):

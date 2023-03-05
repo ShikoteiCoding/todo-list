@@ -50,8 +50,9 @@ def api_required(is_admin: bool = False):
                 logger.debug(f"json not provided: {e}")
 
             if json:
-                api_access_key_id = json.get("api_access_key_id")
-                api_secret_access_key = json.get("api_secret_access_key")
+                header = json.get("header")
+                api_access_key_id = header.get("API-KEY-ID")
+                api_secret_access_key = header.get("API-SECRET-KEY")
             else:
                 return {"message": "please provide API keys"}, 400
 

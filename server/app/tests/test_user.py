@@ -12,7 +12,7 @@ from app.api.users.models import User
 
 from conftest import DEFAULT_API_ACCESS_KEY_ID, DEFAULT_API_SECRET_ACCESS_KEY
 
-from utils import error_message
+from utils import error_message, header_from_user
 
 
 def test_user_list_200(
@@ -23,10 +23,7 @@ def test_user_list_200(
     _user = add_random_user()
     response = client.get(
         "/api/v1/users",
-        json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
-        },
+        json=header_from_user(_user),
         content_type="application/json",
     )
 
@@ -42,8 +39,10 @@ def test_user_list_201(
     response = client.post(
         "/api/v1/users",
         json={
-            "api_access_key_id": DEFAULT_API_ACCESS_KEY_ID,
-            "api_secret_access_key": DEFAULT_API_SECRET_ACCESS_KEY,
+            "header": {
+                "API-KEY-ID": DEFAULT_API_ACCESS_KEY_ID,
+                "API-SECRET-KEY": DEFAULT_API_SECRET_ACCESS_KEY,
+            },
             "username": "New_User",
         },
         content_type="application/json",
@@ -69,10 +68,7 @@ def test_user_list_403(client: FlaskClient, database: SQLAlchemy):
 
     response = client.get(
         "/api/v1/users",
-        json={
-            "api_access_key_id": "users_403",
-            "api_secret_access_key": "users_403",
-        },
+        json={"header": {"API-KEY-ID": "users_403", "API-SECRET-KEY": "users_403"}},
         content_type="application/json",
     )
     data = json.loads(response.data.decode())
@@ -91,10 +87,7 @@ def test_user_get_200(
 
     response = client.get(
         f"/api/v1/users/{_user.id}",
-        json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
-        },
+        json=header_from_user(_user),
         content_type="application/json",
     )
 
@@ -124,8 +117,10 @@ def test_user_get_403(
     response = client.get(
         "/api/v1/users/1",
         json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": "user_403",
+            "header": {
+                "API-KEY-ID": _user.api_access_key_id,
+                "API-SECRET-KEY": "user_403",
+            }
         },
         content_type="application/json",
     )
@@ -144,10 +139,7 @@ def test_user_get_404(
     _user = add_random_user()
     response = client.get(
         "/api/v1/users/111",
-        json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
-        },
+        json=header_from_user(_user),
         content_type="application/json",
     )
     data = json.loads(response.data.decode())
@@ -166,8 +158,7 @@ def test_user_put_200(
     response = client.put(
         f"api/v1/users/{_user.id}",
         json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
+            **header_from_user(_user),
             "username": "User_Put_200",
         },
         content_type="application/json",

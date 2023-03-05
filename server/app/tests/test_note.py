@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask.testing import FlaskClient
 
 from app.api.users.models import User
-from utils import error_message
+from utils import error_message, header_from_user
 
 
 def test_note_list_200(
@@ -21,10 +21,7 @@ def test_note_list_200(
 
     response = client.get(
         f"api/v1/users/{_user.id}/notes",
-        json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
-        },
+        json=header_from_user(_user),
         content_type="application/json",
     )
 
@@ -57,8 +54,7 @@ def test_note_list_201(
     response = client.post(
         f"api/v1/users/{_user.id}/notes",
         json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
+            **header_from_user(_user),
             "title": "note_201",
             "content": "note_201",
         },
@@ -82,10 +78,7 @@ def test_note_get_200(
 
     response = client.get(
         f"api/v1/users/{_user.id}/notes/{_note.id}",
-        json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
-        },
+        json=header_from_user(_user),
         content_type="application/json",
     )
 
@@ -102,10 +95,7 @@ def test_note_get_404(
 
     response = client.get(
         f"api/v1/users/{_user.id}/notes/111",
-        json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
-        },
+        json=header_from_user(_user),
         content_type="application/json",
     )
     data = json.loads(response.data.decode())
@@ -128,10 +118,7 @@ def test_note_put_200(
 
     response = client.put(
         f"api/v1/users/{_user.id}/notes/{_note.id}",
-        json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
-        },
+        json=header_from_user(_user),
         content_type="application/json",
     )
 
@@ -149,8 +136,7 @@ def test_note_put_404(
     response = client.put(
         f"api/v1/users/{_user.id}/notes/111",
         json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
+            **header_from_user(_user),
             "title": "note_400",
         },
         content_type="application/json",
@@ -175,10 +161,7 @@ def test_note_delete_200(
 
     response = client.delete(
         f"api/v1/users/{_user.id}/notes/{_note.id}",
-        json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
-        },
+        json=header_from_user(_user),
         content_type="application/json",
     )
 
@@ -198,10 +181,7 @@ def test_note_delete_404(
 
     response = client.delete(
         f"api/v1/users/{_user.id}/notes/111",
-        json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
-        },
+        json=header_from_user(_user),
         content_type="application/json",
     )
     data = json.loads(response.data.decode())

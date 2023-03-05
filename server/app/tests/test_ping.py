@@ -10,7 +10,7 @@ from flask.testing import FlaskClient
 
 from app.api.users.models import User
 
-from utils import error_message
+from utils import error_message, header_from_user
 
 
 def test_ping_200(
@@ -21,10 +21,7 @@ def test_ping_200(
     _user = add_random_user()
     response = client.get(
         "/api/v1/ping",
-        json={
-            "api_access_key_id": _user.api_access_key_id,
-            "api_secret_access_key": _user.api_secret_access_key,
-        },
+        json=header_from_user(_user),
         content_type="application/json",
     )
     data = json.loads(response.data.decode())
@@ -52,7 +49,12 @@ def test_ping_403(client: FlaskClient, database: SQLAlchemy):
 
     response = client.get(
         "/api/v1/ping",
-        json={"api_access_key_id": "ping_403", "api_secret_access_key": "ping_403"},
+        json={
+            "header": {
+                "API-KEY-ID": "ping_403",
+                "API-SECRET-KEY": "ping_403",
+            }
+        },
         content_type="application/json",
     )
     data = json.loads(response.data.decode())

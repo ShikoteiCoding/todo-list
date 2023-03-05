@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask.testing import FlaskClient
 
 from app.api.users.models import User
+from utils import error_message
 
 
 def test_note_list_200(
@@ -39,10 +40,11 @@ def test_note_list_400(
     _user = add_random_user()
 
     response = client.get(f"api/v1/users/{_user.id}/notes")
-    # data = json.loads(response.data.decode())
+    data = json.loads(response.data.decode())
 
     assert response.status_code == 400
     assert response.content_type == "application/json"
+    assert error_message(400) in data["message"]
 
 
 def test_note_list_201(
@@ -110,7 +112,7 @@ def test_note_get_404(
 
     assert response.status_code == 404
     assert response.content_type == "application/json"
-    assert "note does not exist" in data["message"]
+    assert error_message(404, "note") in data["message"]
 
 
 def test_note_put_200(
@@ -157,7 +159,7 @@ def test_note_put_404(
 
     assert response.status_code == 404
     assert response.content_type == "application/json"
-    assert "note does not exist" in data["message"]
+    assert error_message(404, "note") in data["message"]
 
 
 def test_note_delete_200(
@@ -206,4 +208,4 @@ def test_note_delete_404(
 
     assert response.status_code == 404
     assert response.content_type == "application/json"
-    assert "note does not exist" in data["message"]
+    assert error_message(404, "note") in data["message"]

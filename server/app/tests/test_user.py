@@ -12,6 +12,8 @@ from app.api.users.models import User
 
 from conftest import DEFAULT_API_ACCESS_KEY_ID, DEFAILT_API_SECRET_ACCESS_KEY
 
+from utils import error_message
+
 
 def test_user_list_200(
     client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
@@ -55,9 +57,11 @@ def test_user_list_400(client: FlaskClient, database: SQLAlchemy):
     """UserList.GET - 400"""
 
     response = client.get("/api/v1/users")
+    data = json.loads(response.data.decode())
 
     assert response.status_code == 400
     assert response.content_type == "application/json"
+    assert error_message(400) in data["message"]
 
 
 def test_user_list_403(client: FlaskClient, database: SQLAlchemy):
@@ -71,9 +75,11 @@ def test_user_list_403(client: FlaskClient, database: SQLAlchemy):
         },
         content_type="application/json",
     )
+    data = json.loads(response.data.decode())
 
     assert response.status_code == 403
     assert response.content_type == "application/json"
+    assert error_message(403) in data["message"]
 
 
 def test_user_get_200(
@@ -102,9 +108,11 @@ def test_user_get_400(client: FlaskClient, database: SQLAlchemy) -> None:
     response = client.get(
         f"/api/v1/users",
     )
+    data = json.loads(response.data.decode())
 
     assert response.status_code == 400
     assert response.content_type == "application/json"
+    assert error_message(400, "user") in data["message"]
 
 
 def test_user_get_403(
@@ -121,9 +129,11 @@ def test_user_get_403(
         },
         content_type="application/json",
     )
+    data = json.loads(response.data.decode())
 
     assert response.status_code == 403
     assert response.content_type == "application/json"
+    assert error_message(403) in data["message"]
 
 
 def test_user_get_404(
@@ -143,4 +153,4 @@ def test_user_get_404(
     data = json.loads(response.data.decode())
 
     assert response.status_code == 404
-    assert "user does not exist" in data["message"]
+    assert error_message(404, "user") in data["message"]

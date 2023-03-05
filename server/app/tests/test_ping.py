@@ -42,8 +42,6 @@ def test_ping_400(client: FlaskClient, database: SQLAlchemy):
     )
     data = json.loads(response.data.decode())
 
-    print(data)
-
     assert response.status_code == 400
     assert response.content_type == "application/json"
     assert error_message(400) in data["message"]

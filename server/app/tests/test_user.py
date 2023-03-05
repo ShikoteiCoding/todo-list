@@ -153,4 +153,25 @@ def test_user_get_404(
     data = json.loads(response.data.decode())
 
     assert response.status_code == 404
+    assert response.content_type == "application/json"
     assert error_message(404, "user") in data["message"]
+
+
+def test_user_put_200(
+    client: FlaskClient, database: SQLAlchemy, add_random_user: Callable[[], User]
+) -> None:
+    """UserDetail.PUT - 200"""
+
+    _user = add_random_user()
+    response = client.put(
+        f"api/v1/users/{_user.id}",
+        json={
+            "api_access_key_id": _user.api_access_key_id,
+            "api_secret_access_key": _user.api_secret_access_key,
+            "username": "User_Put_200",
+        },
+        content_type="application/json",
+    )
+
+    assert response.status_code == 200
+    assert response.content_type == "application/json"

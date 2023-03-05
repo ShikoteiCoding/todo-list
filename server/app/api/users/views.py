@@ -3,7 +3,7 @@ from structlog import get_logger
 
 from app.api.security import api_required
 
-from app.api.users.crud import get_all_users, get_user_by_id, create_user
+from app.api.users.crud import get_all_users, get_user_by_id, create_user, update_user
 
 from app.api.users.serializer import post_user_serializer
 
@@ -20,6 +20,7 @@ user = users_namespace.model(
         "username": fields.String(required=True),
         "api_access_key_id": fields.String(required=True),
         "api_secret_access_key": fields.String(required=True),
+        "is_admin": fields.Boolean(required=True),
     },
 )
 
@@ -29,7 +30,7 @@ class UserList(Resource):
     resources for /api/v1/users
     """
 
-    @api_required()
+    @api_required(is_admin=False)
     @users_namespace.marshal_with(user, as_list=True)
     def get(self):
         """returns all users"""
@@ -53,7 +54,7 @@ class UserDetail(Resource):
     resources for /api/v1/user/<int:user_id>
     """
 
-    @api_required()
+    @api_required(is_admin=False)
     @users_namespace.marshal_with(user)
     def get(self, user_id: int):
         """returns a single user"""
@@ -63,6 +64,19 @@ class UserDetail(Resource):
         if not user:
             users_namespace.abort(404, "user does not exist")
         return user, 200
+
+    @api_required(is_admin=False)
+    @users_namespace.expect(post_user_serializer, validate=True)
+    @users_namespace.marshal_with(user)
+    def put(self, user_id: int):
+        """updates a single user"""
+
+        logger.debug("UserDetail.PUT")
+        user = get_user_by_id(user_id)
+        if not user:
+            users_namespace.abort(404, "user does not exist")
+        args = post_user_serializer.parse_args()
+        return update_user(user, args["username"]), 200
 
 
 users_namespace.add_resource(UserList, "")

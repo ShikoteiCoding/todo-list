@@ -56,3 +56,16 @@ def create_user(username: str) -> User | None:
         logger.exception(f"Exception occured: {e}")
         logger.error("Unable to create one user.")
     return user
+
+
+def update_user(user: User, username: str) -> User | None:
+    """update a single user"""
+
+    logger.debug("update_user")
+    try:
+        user.username = username
+        db.session.commit()
+    except Exception as e:
+        logger.exception(f"Exception occured: {e}")
+        logger.error("Unable to update one user.")
+    return user

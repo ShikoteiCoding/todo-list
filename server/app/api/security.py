@@ -1,9 +1,8 @@
 import secrets
 
 from hmac import compare_digest, digest
-from functools import wraps
 from typing import Callable
-from flask import request
+from flask import jsonify, request
 from structlog import get_logger
 
 from app.api.users.models import User
@@ -44,11 +43,17 @@ def api_required(is_admin: bool = False):
 
     def decorator(func: Callable):
         def wrapper(*args, **kwargs):
-            if request.json:
-                api_access_key_id = request.json.get("api_access_key_id")
-                api_secret_access_key = request.json.get("api_secret_access_key")
+            try:
+                json = request.get_json(silent=True)
+            except Exception as e:
+                json = None
+                logger.debug(f"json not provided: {e}")
+
+            if json:
+                api_access_key_id = json.get("api_access_key_id")
+                api_secret_access_key = json.get("api_secret_access_key")
             else:
-                return {"message": "please provide an API keys"}, 400
+                return {"message": "please provide API keys"}, 400
 
             if (
                 api_access_key_id
@@ -57,7 +62,7 @@ def api_required(is_admin: bool = False):
             ):
                 return func(*args, **kwargs)
             else:
-                return {"message": "the provided API key is not valid"}, 403
+                return {"message": "the provided API keys are not valid"}, 403
 
         return wrapper
 

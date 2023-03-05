@@ -10,7 +10,7 @@ from flask.testing import FlaskClient
 
 from app.api.users.models import User
 
-from conftest import DEFAULT_API_ACCESS_KEY_ID, DEFAILT_API_SECRET_ACCESS_KEY
+from conftest import DEFAULT_API_ACCESS_KEY_ID, DEFAULT_API_SECRET_ACCESS_KEY
 
 from utils import error_message
 
@@ -43,7 +43,7 @@ def test_user_list_201(
         "/api/v1/users",
         json={
             "api_access_key_id": DEFAULT_API_ACCESS_KEY_ID,
-            "api_secret_access_key": DEFAILT_API_SECRET_ACCESS_KEY,
+            "api_secret_access_key": DEFAULT_API_SECRET_ACCESS_KEY,
             "username": "New_User",
         },
         content_type="application/json",

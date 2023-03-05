@@ -13,7 +13,7 @@ from app.api.notes.models import Note
 from utils import random_string
 
 DEFAULT_API_ACCESS_KEY_ID = "c6a287c9-b5ed-4103-b34a-316a136c014e"
-DEFAILT_API_SECRET_ACCESS_KEY = "a54fa063-9779-46d6-92e6-4bb2becf2b10"
+DEFAULT_API_SECRET_ACCESS_KEY = "a54fa063-9779-46d6-92e6-4bb2becf2b10"
 
 
 @pytest.fixture(scope="module")
@@ -42,7 +42,7 @@ def database() -> Generator[SQLAlchemy, None, None]:
             User(
                 username="admin",
                 api_access_key_id=DEFAULT_API_ACCESS_KEY_ID,
-                api_secret_access_key=DEFAILT_API_SECRET_ACCESS_KEY,
+                api_secret_access_key=DEFAULT_API_SECRET_ACCESS_KEY,
                 is_admin=True,
             )
         )

@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from structlog import get_logger
 
-from app.api.security import api_required, admin_api_required
+from app.api.security import api_required
 
 from app.api.users.crud import get_all_users, get_user_by_id, create_user
 
@@ -29,7 +29,7 @@ class UserList(Resource):
     resources for /api/v1/users
     """
 
-    @api_required
+    @api_required()
     @users_namespace.marshal_with(user, as_list=True)
     def get(self):
         """returns all users"""
@@ -37,7 +37,7 @@ class UserList(Resource):
         logger.debug("UserList.GET")
         return get_all_users(), 200
 
-    @admin_api_required
+    @api_required(is_admin=True)
     @users_namespace.expect(post_user_serializer, validate=True)
     @users_namespace.marshal_with(user, as_list=True)
     def post(self):
@@ -53,7 +53,7 @@ class UserDetail(Resource):
     resources for /api/v1/user/<int:user_id>
     """
 
-    @api_required
+    @api_required()
     @users_namespace.marshal_with(user)
     def get(self, user_id: int):
         """returns a single user"""

@@ -99,7 +99,6 @@ def test_user_get_200(
 def test_user_get_400(client: FlaskClient, database: SQLAlchemy) -> None:
     """UserDetail.GET - 400"""
 
-    # _user = add_random_user()
     response = client.get(
         f"/api/v1/users",
     )

@@ -9,7 +9,7 @@ ping_namespace = Namespace("ping")
 
 
 class Ping(Resource):
-    @api_required
+    @api_required(is_admin=False)
     def get(self):
         """health check"""
 

@@ -1,7 +1,7 @@
 from structlog import get_logger
 
 from app import db
-from app.api.security import generate_api_keys
+from app.api.auth.security import generate_api_keys
 from app.api.users.models import User
 
 # TODO

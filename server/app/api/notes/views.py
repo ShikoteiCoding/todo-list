@@ -3,7 +3,8 @@ from structlog import get_logger
 
 from app.api.notes.models import Note
 
-from app.api.security import api_required
+from app.api.auth.decorators import api_required
+from app.api.auth.serializer import api_key_serializer
 
 from app.api.notes.crud import (
     get_all_notes,

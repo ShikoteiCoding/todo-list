@@ -1,24 +1,13 @@
-import secrets
-
-from hmac import compare_digest, digest
+from flask import request
 from typing import Callable
-from flask import jsonify, request
+from hmac import compare_digest
 from structlog import get_logger
 
 from app.api.users.models import User
 
+from structlog import get_logger
+
 logger = get_logger(__name__)
-
-# TODO
-# Control the size of tokens in characters and bytes
-# Currently it's not optimized in the database
-# Can lead to errors if oversized strings are generated
-
-
-def generate_api_keys() -> tuple[str, str]:
-    api_access_key_id = secrets.token_urlsafe(16)
-    api_secret_access_key = secrets.token_hex(16)
-    return api_access_key_id, api_secret_access_key
 
 
 def is_valid(
@@ -36,8 +25,6 @@ def is_valid(
         return user
 
 
-# TODO
-# Fix return types of decorator not compatible by flask_restx
 def api_required(is_admin: bool = False):
     """API verification wrapper"""
 

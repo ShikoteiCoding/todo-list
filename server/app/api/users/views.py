@@ -30,9 +30,9 @@ class UserList(Resource):
     resources for /api/v1/users
     """
 
-    @users_namespace.marshal_with(user, as_list=True)
     @header_required()
-    @login(is_admin=False)
+    @login(is_admin=True)
+    @users_namespace.marshal_with(user, as_list=True)
     def get(self):
         """returns all users"""
 
@@ -48,6 +48,7 @@ class UserList(Resource):
 
         logger.debug("UserList.POST")
         args = post_user_serializer.parse_args()
+        print("bug")
         return create_user(username=args["username"]), 201
 
 
@@ -57,7 +58,7 @@ class UserDetail(Resource):
     """
 
     @header_required()
-    @login(is_admin=True)
+    @login(is_admin=False)
     @users_namespace.marshal_with(user)
     def get(self, user_id: int):
         """returns a single user"""
@@ -69,8 +70,7 @@ class UserDetail(Resource):
         return user, 200
 
     @header_required()
-    @login(is_admin=True)
-    @users_namespace.expect(post_user_serializer, validate=True)
+    @login(is_admin=False)
     @users_namespace.marshal_with(user)
     def put(self, user_id: int):
         """updates a single user"""

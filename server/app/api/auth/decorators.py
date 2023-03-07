@@ -34,6 +34,7 @@ def header_required():
         def wrapper(*args, **kwargs):
             errors = header_serializer.validate(request.get_json(silent=True))
             if errors:
+                print("here")
                 abort(400, f"please provide API keys. {errors}")
             return func(*args, **kwargs)
 
@@ -58,7 +59,8 @@ def login(is_admin: bool = False):
             ):
                 return func(*args, **kwargs)
 
-            return {"message": "the provided API keys are not valid"}, 403
+            abort(403, "the provided API keys are not valid")
+            # return {"message": "the provided API keys are not valid"}, 403
 
         return wrapper
 

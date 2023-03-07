@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource
 from structlog import get_logger
 
-from app.api.auth.decorators import header_required, login
+from app.api.auth.decorators import mashmallow_validate, login
 
 logger = get_logger(__name__)
 
@@ -9,7 +9,7 @@ ping_namespace = Namespace("ping")
 
 
 class Ping(Resource):
-    @header_required()
+    @mashmallow_validate()
     @login(is_admin=False)
     def get(self):
         """health check"""

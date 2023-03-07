@@ -1,10 +1,11 @@
 from flask_restx import Namespace, Resource, fields
 from structlog import get_logger
 
-from app.api.auth.decorators import header_required, login
+from app.api.auth.decorators import mashmallow_validate, login
 
 from app.api.users.crud import get_all_users, get_user_by_id, create_user, update_user
 
+from app.api.auth.serializer import auth_serializer
 from app.api.users.serializer import post_user_serializer
 
 logger = get_logger(__name__)
@@ -30,7 +31,7 @@ class UserList(Resource):
     resources for /api/v1/users
     """
 
-    @header_required()
+    @mashmallow_validate(auth_serializer)
     @login(is_admin=True)
     @users_namespace.marshal_with(user, as_list=True)
     def get(self):
@@ -39,7 +40,7 @@ class UserList(Resource):
         logger.debug("UserList.GET")
         return get_all_users(), 200
 
-    @header_required()
+    # @mashmallow_validate(post_user_serializer)
     @login(is_admin=True)
     @users_namespace.expect(post_user_serializer, validate=True)
     @users_namespace.marshal_with(user, as_list=True)
@@ -47,9 +48,8 @@ class UserList(Resource):
         """returns all users"""
 
         logger.debug("UserList.POST")
-        args = post_user_serializer.parse_args()
-        print("bug")
-        return create_user(username=args["username"]), 201
+        # args = post_user_serializer.parse_args()
+        return create_user(username=""), 201
 
 
 class UserDetail(Resource):
@@ -57,7 +57,7 @@ class UserDetail(Resource):
     resources for /api/v1/user/<int:user_id>
     """
 
-    @header_required()
+    @mashmallow_validate(auth_serializer)
     @login(is_admin=False)
     @users_namespace.marshal_with(user)
     def get(self, user_id: int):
@@ -69,7 +69,7 @@ class UserDetail(Resource):
             users_namespace.abort(404, "user does not exist")
         return user, 200
 
-    @header_required()
+    @mashmallow_validate(post_user_serializer)
     @login(is_admin=False)
     @users_namespace.marshal_with(user)
     def put(self, user_id: int):
@@ -79,8 +79,8 @@ class UserDetail(Resource):
         user = get_user_by_id(user_id)
         if not user:
             users_namespace.abort(404, "user does not exist")
-        args = post_user_serializer.parse_args()
-        return update_user(user, args["username"]), 200
+        # args = post_user_serializer.parse_args()
+        return update_user(user, "username"), 200
 
 
 users_namespace.add_resource(UserList, "")

@@ -6,8 +6,8 @@ class APIKeysSchema(Schema):
     API_SECRET_KEY = fields.Str(required=True)
 
 
-class HeaderSchema(Schema):
+class AuthSchema(Schema):
     header = fields.Nested(APIKeysSchema, required=True)
 
 
-header_serializer = HeaderSchema()
+auth_serializer = AuthSchema()

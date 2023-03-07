@@ -51,6 +51,9 @@ def test_user_list_201(
         },
         content_type="application/json",
     )
+    data = json.loads(response.data.decode())
+
+    print(data)
 
     assert response.status_code == 201
     assert response.content_type == "application/json"
@@ -61,8 +64,6 @@ def test_user_list_400(client: FlaskClient, database: SQLAlchemy):
 
     response = client.get("/api/v1/users")
     data = json.loads(response.data.decode())
-
-    print(data)
 
     assert response.status_code == 400
     assert response.content_type == "application/json"

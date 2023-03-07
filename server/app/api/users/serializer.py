@@ -1,5 +1,15 @@
-from flask_restx import reqparse
+from marshmallow import Schema, fields
+
+from app.api.auth.serializer import AuthSchema
 
 
-post_user_serializer = reqparse.RequestParser()
-post_user_serializer.add_argument("username", required=True)
+class BaseUserSchema(Schema):
+    username = fields.Str(required=True)
+
+
+class PostUserSchema(AuthSchema):
+    # header = fields.Nested(HeaderSchema, required=True)
+    username = fields.Str(required=True)
+
+
+post_user_serializer = PostUserSchema()

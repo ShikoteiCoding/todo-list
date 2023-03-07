@@ -1,4 +1,13 @@
-from flask_restx import reqparse
+from marshmallow import Schema, fields
 
-api_key_serializer = reqparse.RequestParser()
-api_key_serializer.add_argument("header", required=True)
+
+class APIKeysSchema(Schema):
+    API_KEY_ID = fields.Str(required=True)
+    API_SECRET_KEY = fields.Str(required=True)
+
+
+class HeaderSchema(Schema):
+    header = fields.Nested(APIKeysSchema, required=True)
+
+
+header_serializer = HeaderSchema()

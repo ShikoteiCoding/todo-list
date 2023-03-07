@@ -51,8 +51,8 @@ def test_ping_403(client: FlaskClient, database: SQLAlchemy):
         "/api/v1/ping",
         json={
             "header": {
-                "API-KEY-ID": "ping_403",
-                "API-SECRET-KEY": "ping_403",
+                "API_KEY_ID": "ping_403",
+                "API_SECRET_KEY": "ping_403",
             }
         },
         content_type="application/json",

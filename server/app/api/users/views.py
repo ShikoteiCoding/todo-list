@@ -1,12 +1,11 @@
 from flask_restx import Namespace, Resource, fields
 from structlog import get_logger
 
-from app.api.auth.decorators import api_required
+from app.api.auth.decorators import header_required, login
 
 from app.api.users.crud import get_all_users, get_user_by_id, create_user, update_user
 
 from app.api.users.serializer import post_user_serializer
-from app.api.auth.serializer import api_key_serializer
 
 logger = get_logger(__name__)
 
@@ -31,17 +30,17 @@ class UserList(Resource):
     resources for /api/v1/users
     """
 
-    @api_required(is_admin=False)
-    @users_namespace.expect(api_key_serializer, validate=True)
     @users_namespace.marshal_with(user, as_list=True)
+    @header_required()
+    @login(is_admin=False)
     def get(self):
         """returns all users"""
 
         logger.debug("UserList.GET")
         return get_all_users(), 200
 
-    @api_required(is_admin=True)
-    @users_namespace.expect(api_key_serializer, validate=True)
+    @header_required()
+    @login(is_admin=True)
     @users_namespace.expect(post_user_serializer, validate=True)
     @users_namespace.marshal_with(user, as_list=True)
     def post(self):
@@ -57,7 +56,8 @@ class UserDetail(Resource):
     resources for /api/v1/user/<int:user_id>
     """
 
-    @api_required(is_admin=False)
+    @header_required()
+    @login(is_admin=True)
     @users_namespace.marshal_with(user)
     def get(self, user_id: int):
         """returns a single user"""
@@ -68,7 +68,8 @@ class UserDetail(Resource):
             users_namespace.abort(404, "user does not exist")
         return user, 200
 
-    @api_required(is_admin=False)
+    @header_required()
+    @login(is_admin=True)
     @users_namespace.expect(post_user_serializer, validate=True)
     @users_namespace.marshal_with(user)
     def put(self, user_id: int):

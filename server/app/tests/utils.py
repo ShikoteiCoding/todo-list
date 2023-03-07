@@ -22,7 +22,7 @@ def error_message(code: int, resource_name: str = "") -> str | None:
 def header_from_user(user: User) -> dict[str, dict[str, str]]:
     return {
         "header": {
-            "API-KEY-ID": user.api_access_key_id,
-            "API-SECRET-KEY": user.api_secret_access_key,
+            "API_KEY_ID": user.api_access_key_id,
+            "API_SECRET_KEY": user.api_secret_access_key,
         }
     }

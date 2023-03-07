@@ -3,8 +3,7 @@ from structlog import get_logger
 
 from app.api.notes.models import Note
 
-from app.api.auth.decorators import api_required
-from app.api.auth.serializer import api_key_serializer
+from app.api.auth.decorators import header_required, login
 
 from app.api.notes.crud import (
     get_all_notes,
@@ -38,7 +37,8 @@ class NoteList(Resource):
     resources for /api/v1/users/<int:user_id>/notes
     """
 
-    @api_required()
+    @header_required()
+    @login(is_admin=False)
     @notes_namespace.marshal_with(note, as_list=True)
     def get(self, user_id: int):
         """return all notes of user"""
@@ -46,7 +46,8 @@ class NoteList(Resource):
         logger.debug("NoteList.GET")
         return get_all_notes(user_id), 200
 
-    @api_required()
+    @header_required()
+    @login(is_admin=False)
     @notes_namespace.expect(post_note_serializer, validate=True)
     @notes_namespace.marshal_with(note)
     def post(self, user_id: int):
@@ -63,7 +64,8 @@ class NoteDetail(Resource):
     ressource for /api/v1/users/<int:user_id>/notes/<int:note_id>
     """
 
-    @api_required()
+    @header_required()
+    @login(is_admin=False)
     @notes_namespace.marshal_with(note)
     def get(self, user_id: int, note_id: int):
         """return a single note"""
@@ -74,7 +76,8 @@ class NoteDetail(Resource):
             notes_namespace.abort(404, "note does not exist")
         return note, 200
 
-    @api_required()
+    @header_required()
+    @login(is_admin=False)
     @notes_namespace.expect(post_note_serializer, validate=True)
     @notes_namespace.marshal_with(note)
     def put(self, user_id: int, note_id: int):
@@ -87,7 +90,8 @@ class NoteDetail(Resource):
             notes_namespace.abort(404, "note does not exist")
         return update_note(note, args["title"], args["content"]), 200
 
-    @api_required()
+    @header_required()
+    @login(is_admin=False)
     @notes_namespace.marshal_with(note)
     def delete(self, user_id: int, note_id: int):
         """delete a single note"""
